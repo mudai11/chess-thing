@@ -1,0 +1,9 @@
+{
+  "name": "chess-thing",
+  "version": "1.0.0",
+  "description": "A chess game web application built with react and fastify",
+  "scripts": {
+    "web": "cd web && pnpm dev",
+    "server": "cd server && pnpm dev"
+  }
+}
