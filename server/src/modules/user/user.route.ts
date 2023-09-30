@@ -1,9 +1,11 @@
 import { FastifyInstance } from "fastify";
 import {
+  authenticateUserHandler,
   createUserHandler,
   getUsersHandler,
   signinUserHandler,
   updateUserHandler,
+  deleteSessionHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 
@@ -49,6 +51,32 @@ export default async function userRoutes(app: FastifyInstance) {
       },
     },
     updateUserHandler
+  );
+
+  app.delete(
+    "/sign-out",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        response: {
+          200: $ref("defaultSuccessResponseSchema"),
+          400: $ref("defaultErrorResponseSchema"),
+        },
+      },
+    },
+    deleteSessionHandler
+  );
+
+  app.get(
+    "/me",
+    {
+      schema: {
+        response: {
+          400: $ref("defaultErrorResponseSchema"),
+        },
+      },
+    },
+    authenticateUserHandler
   );
 
   app.get("/", getUsersHandler);

@@ -24,7 +24,11 @@ const Logo = () => {
     );
 
   return (
-    <Link className="flex flex-row gap-2 items-center cursor-pointer" href="/">
+    <Link
+      className="flex flex-row gap-2 items-center cursor-pointer"
+      href="/"
+      prefetch={false}
+    >
       <Image
         src={theme === "light" ? logo.src : darklogo.src}
         alt="navbar logo"

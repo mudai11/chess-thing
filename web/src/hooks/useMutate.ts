@@ -27,7 +27,7 @@ export function useMutate<TData = any, TPayload = any>(
     };
   }, []);
 
-  function mutate(pld?: TPayload) {
+  function mutate() {
     setIsLoading(true);
     fetch(api, {
       method: method ? method : "POST",

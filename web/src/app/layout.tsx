@@ -12,7 +12,9 @@ export const metadata: Metadata = {
   description: "A simple chess game application",
 };
 
-export default function RootLayout({
+export const dynamic = "force-dynamic";
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;

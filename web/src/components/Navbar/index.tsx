@@ -3,18 +3,34 @@ import { buttonVariants } from "../ui/button";
 import Logo from "./Logo";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/utils";
+import { useServerSession } from "@/hooks/useServerSession";
+import UserMenu from "./UserMenu";
 
 const Navbar = async () => {
+  const user = await useServerSession();
+
   return (
     <header className="flex flex-row justify-around items-center pt-4">
       <Logo />
       <div className="flex flex-row gap-2">
-        <Link
-          href="sign-in"
-          className={cn(buttonVariants({ variant: "link" }), "text-md")}
-        >
-          Login
-        </Link>
+        {user ? (
+          <UserMenu
+            user={{
+              id: user.id,
+              username: user.username,
+              image: user.image,
+              email: user.email,
+            }}
+          />
+        ) : (
+          <Link
+            href="sign-in"
+            className={cn(buttonVariants({ variant: "ghost" }), "text-md")}
+            prefetch={false}
+          >
+            Login
+          </Link>
+        )}
         <ThemeToggle />
       </div>
     </header>

@@ -11,10 +11,12 @@ import { SigninUserSchema, signinUserSchema } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/useToast";
+import { useRouter } from "next/navigation";
 
 interface SigninFormProps extends HTMLAttributes<HTMLDivElement> {}
 
 export function SigninForm({ className, ...props }: SigninFormProps) {
+  const { push, refresh } = useRouter();
   const {
     register,
     handleSubmit,
@@ -39,7 +41,8 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
           title: "Welcome back.",
           description: "You've logged in successfully.",
         });
-        return;
+        refresh();
+        push("/");
       }
     } catch (e) {
       if (e instanceof AxiosError) {

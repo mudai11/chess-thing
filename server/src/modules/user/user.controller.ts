@@ -4,6 +4,7 @@ import {
   createUser,
   findUserById,
   findUserByUsername,
+  getAuthenticatedUser,
   getUsers,
   updateUserEmail,
   updateUserPassword,
@@ -91,17 +92,27 @@ async function updateUserHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
-  const token = request.cookies["accessToken"]!;
+  const token = request.cookies["accessToken"];
+  if (!token) {
+    return reply.status(401).send({
+      error: "Unauthorized.",
+    });
+  }
   const decoded: {
     id: string;
     iat: string;
-  } | null = app.jwt.decode(token)!;
+  } | null = app.jwt.decode(token);
+  if (!decoded) {
+    return reply.status(400).send({
+      error: "Access token is invalid.",
+    });
+  }
   const id = decoded.id;
   const user = await findUserById(id);
 
   if (!user) {
-    return reply.status(500).send({
-      error: "Internal server error",
+    return reply.status(400).send({
+      error: "Token does not associate to any user.",
     });
   }
   if (body.email) {
@@ -163,9 +174,81 @@ async function updateUserHandler(
   });
 }
 
+async function authenticateUserHandler(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const token = request.cookies["accessToken"];
+  if (!token) {
+    return reply.status(401).send({
+      error: "You're not logged in.",
+    });
+  }
+  const decoded: {
+    id: string;
+    iat: string;
+  } | null = app.jwt.decode(token);
+  if (!decoded) {
+    return reply.status(400).send({
+      error: "Access token is invalid.",
+    });
+  }
+
+  const id = decoded.id;
+  const user = await getAuthenticatedUser(id);
+  if (!user) {
+    return reply.status(400).send({
+      error: "Token does not associate to any user.",
+    });
+  }
+
+  return reply.status(200).send(user);
+}
+
+async function deleteSessionHandler(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
+  const token = request.cookies["accessToken"];
+  if (!token) {
+    return reply.status(401).send({
+      error: "You're not logged in.",
+    });
+  }
+  const decoded: {
+    id: string;
+    iat: string;
+  } | null = app.jwt.decode(token);
+  if (!decoded) {
+    return reply.status(400).send({
+      error: "Access token is invalid.",
+    });
+  }
+
+  const id = decoded.id;
+  const user = await getAuthenticatedUser(id);
+  if (!user) {
+    return reply.status(400).send({
+      error: "Token does not associate to any user.",
+    });
+  }
+
+  return reply
+    .status(200)
+    .setCookie("accessToken", "", {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      maxAge: 0,
+    })
+    .send({ message: "Success" });
+}
+
 export {
   createUserHandler,
   getUsersHandler,
   signinUserHandler,
   updateUserHandler,
+  authenticateUserHandler,
+  deleteSessionHandler,
 };

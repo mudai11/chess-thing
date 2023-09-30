@@ -31,7 +31,11 @@ export default async function SignupPage() {
       </div>
       <div className="container relative h-full flex-col items-center justify-center lg:px-0">
         <div className="p-8">
-          <Link href="/" className={cn(buttonVariants({ variant: "ghost" }))}>
+          <Link
+            href="/"
+            className={cn(buttonVariants({ variant: "ghost" }))}
+            prefetch={false}
+          >
             <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="mx-auto flex w-full pt-14 flex-col justify-center space-y-6 sm:w-[350px]">
@@ -49,6 +53,7 @@ export default async function SignupPage() {
               <Link
                 href="/terms"
                 className="underline underline-offset-4 hover:text-primary"
+                prefetch={false}
               >
                 Terms of Service
               </Link>{" "}
@@ -56,6 +61,7 @@ export default async function SignupPage() {
               <Link
                 href="/privacy"
                 className="underline underline-offset-4 hover:text-primary"
+                prefetch={false}
               >
                 Privacy Policy
               </Link>
@@ -68,6 +74,7 @@ export default async function SignupPage() {
               <Link
                 href="/sign-in"
                 className={cn(buttonVariants({ variant: "link" }))}
+                prefetch={false}
               >
                 Login
               </Link>
