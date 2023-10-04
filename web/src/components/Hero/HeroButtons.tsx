@@ -3,10 +3,10 @@
 import { Button } from "../ui/button";
 import { Play, UserPlus2 } from "lucide-react";
 import Link from "next/link";
-import useUserStore from "@/stores/useUserStore";
+import useUserStore from "@/store/store";
 
 const HeroButtons = () => {
-  const { user } = useUserStore();
+  const user = useUserStore.use.user();
 
   return (
     <div className="flex flex-col gap-3 md:flex-row pt-5 lg:pt-2">

@@ -10,27 +10,25 @@ import {
 import { FC } from "react";
 import UserAvatar from "./UserAvatar";
 import Link from "next/link";
-import useUserStore from "@/stores/useUserStore";
+import useUserStore from "@/store/store";
 import { useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import User from "@/../../server/src/types";
 
 interface UserMenuProps {
-  user: {
-    id: string | null | undefined;
-    username: string | null | undefined;
-    image: string | null | undefined;
-    email: string | null | undefined;
-  };
+  user: User;
 }
 
 const UserMenu: FC<UserMenuProps> = ({ user }) => {
-  const { setUser, clearUser } = useUserStore();
+  const clearUser = useUserStore.use.clearUser();
   const { push, refresh } = useRouter();
 
   useEffect(() => {
+    const setUser = useUserStore.use.setUser();
     setUser(user);
-  }, [setUser, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const signoutHandler = async () => {
     try {
@@ -55,12 +53,9 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-full">
-        <UserAvatar
-          className="h-9 w-9"
-          user={{ username: user.username || null, image: user.image || null }}
-        />
+        <UserAvatar className="h-9 w-9" user={user} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-inherit" align="end">
+      <DropdownMenuContent align="end">
         <div className="flex items-center justify-start gap-2 p-2">
           <div className="flex flex-col space-y-1 leading-none">
             {user.username && <p className="font-medium">{user.username}</p>}

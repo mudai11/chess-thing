@@ -14,17 +14,10 @@ const Navbar = async () => {
       <Logo />
       <div className="flex flex-row gap-2">
         {user ? (
-          <UserMenu
-            user={{
-              id: user.id,
-              username: user.username,
-              image: user.image,
-              email: user.email,
-            }}
-          />
+          <UserMenu user={user} />
         ) : (
           <Link
-            href="sign-in"
+            href="/sign-in"
             className={cn(buttonVariants({ variant: "ghost" }), "text-md")}
             prefetch={false}
           >

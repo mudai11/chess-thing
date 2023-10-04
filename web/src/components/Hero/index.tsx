@@ -1,7 +1,4 @@
-import Link from "next/link";
 import HeroAnimatedLogo from "./HeroAnimatedLogo";
-import { Button } from "../ui/button";
-import { Play, UserPlus2 } from "lucide-react";
 import HeroButtons from "./HeroButtons";
 
 const Hero = async () => {

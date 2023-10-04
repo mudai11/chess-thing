@@ -55,8 +55,7 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
       }
       toast({
         title: "An error has occured !",
-        description:
-          "Could not create an account for you right now, try again later.",
+        description: "Could not sign you in right now, try again later.",
         variant: "destructive",
       });
     }
