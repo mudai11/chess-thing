@@ -10,22 +10,22 @@ import {
 import { FC } from "react";
 import UserAvatar from "./UserAvatar";
 import Link from "next/link";
-import useUserStore from "@/store/store";
+import userStore from "@/store/store";
 import { useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import User from "@/../../server/src/types";
+import { User } from "@/../../server/src/types";
 
 interface UserMenuProps {
   user: User;
 }
 
 const UserMenu: FC<UserMenuProps> = ({ user }) => {
-  const clearUser = useUserStore.use.clearUser();
+  const clearUser = userStore.use.clearUser();
+  const setUser = userStore.use.setUser();
   const { push, refresh } = useRouter();
 
   useEffect(() => {
-    const setUser = useUserStore.use.setUser();
     setUser(user);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

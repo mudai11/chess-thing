@@ -8,6 +8,7 @@ import {
   deleteSessionHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
+import { $ref as sharedRef } from "../shared/response.schema";
 
 export default async function userRoutes(app: FastifyInstance) {
   app.post(
@@ -16,8 +17,8 @@ export default async function userRoutes(app: FastifyInstance) {
       schema: {
         body: $ref("createUserSchema"),
         response: {
-          201: $ref("defaultSuccessResponseSchema"),
-          400: $ref("defaultErrorResponseSchema"),
+          201: sharedRef("defaultSuccessResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
         },
       },
     },
@@ -30,8 +31,8 @@ export default async function userRoutes(app: FastifyInstance) {
       schema: {
         body: $ref("signinUserSchema"),
         response: {
-          200: $ref("defaultSuccessResponseSchema"),
-          400: $ref("defaultErrorResponseSchema"),
+          200: sharedRef("defaultSuccessResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
         },
       },
     },
@@ -45,8 +46,8 @@ export default async function userRoutes(app: FastifyInstance) {
       schema: {
         body: $ref("updateUserSchema"),
         response: {
-          200: $ref("defaultSuccessResponseSchema"),
-          400: $ref("defaultErrorResponseSchema"),
+          200: sharedRef("defaultSuccessResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
         },
       },
     },
@@ -59,8 +60,8 @@ export default async function userRoutes(app: FastifyInstance) {
       preHandler: [app.authenticate],
       schema: {
         response: {
-          200: $ref("defaultSuccessResponseSchema"),
-          400: $ref("defaultErrorResponseSchema"),
+          200: sharedRef("defaultSuccessResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
         },
       },
     },
@@ -72,7 +73,7 @@ export default async function userRoutes(app: FastifyInstance) {
     {
       schema: {
         response: {
-          400: $ref("defaultErrorResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
         },
       },
     },

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { headers } from "next/headers";
-import User from "@/../../server/src/types";
+import { User } from "@/../../server/src/types";
 
 export async function useServerSession() {
   const headersList = headers();

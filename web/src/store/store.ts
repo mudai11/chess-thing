@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import User from "@/../../server/src/types";
 import { createSelectors } from "./createSelectors";
+import { create } from "zustand";
+import { User } from "@/../../server/src/types";
 
 type userStorState = {
   user: User | null;
@@ -11,10 +11,10 @@ type userStorAction = {
   clearUser: () => void;
 };
 
-const useUserStoreBase = create<userStorState & userStorAction>()((set) => ({
+const userStore = create<userStorState & userStorAction>()((set) => ({
   user: null,
   setUser: (user) => set(() => ({ user: user })),
   clearUser: () => set(() => ({ user: null }), true),
 }));
 
-export default createSelectors(useUserStoreBase);
+export default createSelectors(userStore);

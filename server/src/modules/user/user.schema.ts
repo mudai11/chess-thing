@@ -47,15 +47,6 @@ const signinUserSchema = z.object({
     })
     .min(8),
 });
-
-const defaultSuccessResponseSchema = z.object({
-  message: z.string(),
-});
-
-const defaultErrorResponseSchema = z.object({
-  error: z.string(),
-});
-
 const updateUserSchema = z.object({
   email: z
     .string({
@@ -85,11 +76,12 @@ export type CreateUserSchema = z.infer<typeof createUserSchema>;
 export type SigninUserSchema = z.infer<typeof signinUserSchema>;
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
 
-export const { schemas: userSchemas, $ref } = buildJsonSchemas({
-  createUserSchema,
-  createUserResponseSchema,
-  signinUserSchema,
-  defaultSuccessResponseSchema,
-  defaultErrorResponseSchema,
-  updateUserSchema,
-});
+export const { schemas: userSchemas, $ref } = buildJsonSchemas(
+  {
+    createUserSchema,
+    createUserResponseSchema,
+    signinUserSchema,
+    updateUserSchema,
+  },
+  { $id: "user" }
+);
