@@ -1,20 +1,19 @@
 import axios, { AxiosError } from "axios";
 import { headers } from "next/headers";
+import { cache } from "react";
 import { User } from "@/../../server/src/types";
+import { env } from "../../env";
 
-export async function useServerSession() {
+export const useServerSession = cache(async () => {
   const headersList = headers();
   const cookie = headersList.get("cookie");
 
   try {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
-      {
-        headers: {
-          cookie: cookie,
-        },
-      }
-    );
+    const { data } = await axios.get(`${env.SERVER_URL}/api/users/me`, {
+      headers: {
+        cookie: cookie,
+      },
+    });
 
     return data as User;
   } catch (e) {
@@ -24,4 +23,4 @@ export async function useServerSession() {
       }
     }
   }
-}
+});

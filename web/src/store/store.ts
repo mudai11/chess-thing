@@ -11,10 +11,10 @@ type userStorAction = {
   clearUser: () => void;
 };
 
-const userStore = create<userStorState & userStorAction>()((set) => ({
+const userUserStore = create<userStorState & userStorAction>()((set) => ({
   user: null,
   setUser: (user) => set(() => ({ user: user })),
   clearUser: () => set(() => ({ user: null }), true),
 }));
 
-export default createSelectors(userStore);
+export default createSelectors(userUserStore);

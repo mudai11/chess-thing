@@ -34,7 +34,7 @@ export default async function SigninPage() {
           <Link
             href="/"
             className={cn(buttonVariants({ variant: "ghost" }))}
-            prefetch={false}
+      
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>

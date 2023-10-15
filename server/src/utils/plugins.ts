@@ -37,5 +37,9 @@ export async function injectPlugins(
     secret: secret_key,
   });
 
-  await app.register(io);
+  await app.register(io, {
+    cors: {
+      origin: [cors_origin],
+    },
+  });
 }

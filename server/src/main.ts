@@ -3,10 +3,15 @@ import { Server } from "socket.io";
 import { injectPlugins } from "./utils/plugins";
 import { injectRoutes } from "./utils/routes";
 import { injectSchemas } from "./utils/schemas";
+import { injectSocket } from "./socket/socket";
+import Redis from "ioredis";
 import { env } from "../env";
-import { injectSocket } from "./modules/socket/socket";
 
 export const app: FastifyInstance = Fastify();
+export const publisher = new Redis(env.REDIS_URL);
+const subscriber = new Redis(env.REDIS_URL);
+const port = parseInt(env.PORT, 10);
+const host = env.HOST;
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -38,7 +43,7 @@ async function main() {
   app.io.on("connection", injectSocket);
 
   try {
-    app.listen({ port: 8080 }, (_, address) => {
+    app.listen({ host: host, port: port }, (_, address) => {
       console.log(`server listening on: ${address}`);
     });
   } catch (e) {

@@ -19,7 +19,6 @@ const Navbar = async () => {
           <Link
             href="/sign-in"
             className={cn(buttonVariants({ variant: "ghost" }), "text-md")}
-            prefetch={false}
           >
             Login
           </Link>

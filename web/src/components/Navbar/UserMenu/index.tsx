@@ -68,22 +68,22 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/" prefetch={false}>
+          <Link href="/" >
             Home
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href={`/@${user.username}`} prefetch={false}>
+          <Link href={`/@${user.username}`} >
             Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/messages" prefetch={false}>
+          <Link href="/messages" >
             Messages
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/settings" prefetch={false}>
+          <Link href="/settings" >
             Settings
           </Link>
         </DropdownMenuItem>

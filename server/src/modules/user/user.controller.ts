@@ -178,6 +178,7 @@ async function authenticateUserHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
+  console.log("AUTH API HIT");
   const token = request.cookies["accessToken"];
   if (!token) {
     return reply.status(401).send({
