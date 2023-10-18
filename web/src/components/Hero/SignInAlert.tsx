@@ -24,8 +24,8 @@ export function SignInAlert() {
         <AlertDialogHeader>
           <AlertDialogTitle>You must sign in first</AlertDialogTitle>
           <AlertDialogDescription>
-            In order to start a game and play with your friends you must sign in
-            first.
+            In order to start a game and play with your friends, you must sign
+            in first.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

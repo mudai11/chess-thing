@@ -23,6 +23,7 @@ import useUserStore from "@/store/store";
 import { env } from "@/../env";
 import axios from "axios";
 import { Icons } from "../Icons";
+import { toast } from "@/hooks/useToast";
 
 export function CreateLobbyDialog() {
   const [side, setSide] = useState<string>("White");
@@ -47,6 +48,10 @@ export function CreateLobbyDialog() {
         }
       );
       push(`/game/${data.message}`);
+      toast({
+        title: "Game lobby created",
+        description: "A game lobby is successfully created.",
+      });
     } catch (e) {
       console.log(e);
     } finally {
