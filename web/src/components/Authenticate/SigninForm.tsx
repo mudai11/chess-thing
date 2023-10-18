@@ -39,7 +39,7 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
       if (data.message === "Success") {
         toast({
           title: "Welcome back.",
-          description: "You've logged in successfully.",
+          description: "You've logged in successfully. Redirecting...",
         });
         refresh();
         push("/");
@@ -51,13 +51,13 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
           description: e.response?.data.error,
           variant: "destructive",
         });
-        return;
+      } else {
+        toast({
+          title: "An error has occured !",
+          description: "Could not sign you in right now, try again later.",
+          variant: "destructive",
+        });
       }
-      toast({
-        title: "An error has occured !",
-        description: "Could not sign you in right now, try again later.",
-        variant: "destructive",
-      });
     }
   };
 

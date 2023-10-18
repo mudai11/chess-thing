@@ -2,7 +2,7 @@
 
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, FC } from "react";
 import useUserStore from "@/store/store";
 import io from "socket.io-client";
 import { env } from "@/../env";
@@ -15,7 +15,7 @@ interface ChessboardComponentProps {
   id: string;
 }
 
-export default function ChessboardComponent({ id }: ChessboardComponentProps) {
+const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
   const [game, updateGame] = useState(new Chess());
   const user = useUserStore.use.user();
 
@@ -23,17 +23,17 @@ export default function ChessboardComponent({ id }: ChessboardComponentProps) {
     socket.connect();
     socket.on("connect", () => {
       if (user) socket.emit("join-lobby", id, user.id);
-      console.log("connected");
     });
 
     return () => {
+      if (user) socket.emit("leave-lobby", id, user.id);
+      socket.removeAllListeners();
       socket.disconnect();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, user?.id]);
+  }, [id, user]);
 
   useEffect(() => {
-    socket.on(id, (_, move) => {
+    socket.on("sync-move", (_, move) => {
       const tempGame = new Chess();
       tempGame.loadPgn(game.pgn());
       const valid = tempGame.moves();
@@ -46,26 +46,25 @@ export default function ChessboardComponent({ id }: ChessboardComponentProps) {
         updateGame(tempGame);
       }
     });
-  }, [game, id]);
+    return () => {
+      socket.removeAllListeners();
+    };
+  }, [game]);
 
   function onDrop(sourceSquare: string, targetSquare: string) {
     const tempGame = new Chess();
     tempGame.loadPgn(game.pgn());
     const valid = tempGame.moves();
-    if (!valid.includes(targetSquare)) {
-      return false;
-    }
+    if (!valid.includes(targetSquare) || !user) return false;
     const turn = tempGame.turn();
     const move = tempGame.move({
       from: sourceSquare,
       to: targetSquare,
       promotion: "q",
     });
-
-    if (move) {
-      socket.emit("move", turn, move, id);
-      updateGame(tempGame);
-    }
+    if (!move) return false;
+    socket.emit("move", turn, move, id, user.id);
+    updateGame(tempGame);
     return true;
   }
 
@@ -74,4 +73,6 @@ export default function ChessboardComponent({ id }: ChessboardComponentProps) {
       <Chessboard position={game.fen()} onPieceDrop={onDrop} />
     </div>
   );
-}
+};
+
+export default ChessboardComponent;
