@@ -33,7 +33,7 @@ async function build() {
   await injectSchemas(app);
 
   app.get("/", async function handler(_, reply) {
-    reply.status(200).send("Welcome to Chess Thing server! 🎉");
+    reply.status(200).send("Welcome to chess thing server! 🎉");
   });
 }
 
