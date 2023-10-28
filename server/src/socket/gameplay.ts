@@ -74,13 +74,79 @@ export async function leaveLobby(
     game.end_reason = "BLACK_DISCONNECTED";
   }
   const { host, players, id, ...rest } = game;
-  await db.game.update({
-    where: {
-      id: game_id,
-    },
-    data: {
-      ...rest,
-    },
+  try {
+    await db.game.update({
+      where: {
+        id: game_id,
+      },
+      data: {
+        ...rest,
+      },
+    });
+    await publisher.del(game_id);
+  } catch (e) {
+    this.to(user_id).emit("oops", e);
+  }
+}
+
+export async function gameOver(
+  this: Socket,
+  game_id: string,
+  end_reason: Game["end_reason"]
+) {
+  const active_game = await publisher.get(game_id);
+  if (!active_game) return;
+  const game: TCachedGame = JSON.parse(active_game);
+  switch (end_reason) {
+    case "DRAW":
+      game.end_reason = "DRAW";
+      break;
+    case "BLACK_CHECKMATED":
+      game.end_reason = "BLACK_CHECKMATED";
+      game.winner = game.whiteId;
+      break;
+    case "WHITE_CHECKMATED":
+      game.end_reason = "WHITE_CHECKMATED";
+      game.winner = game.whiteId;
+      break;
+    case "BLACK_RESIGNED":
+      game.end_reason = "BLACK_RESIGNED";
+      game.winner = game.whiteId;
+      break;
+    case "WHITE_RESIGNED":
+      game.end_reason = "WHITE_RESIGNED";
+      game.winner = game.blackId;
+      break;
+  }
+  const { host, players, id, ...rest } = game;
+  try {
+    await db.game.update({
+      where: {
+        id: game_id,
+      },
+      data: {
+        ...rest,
+      },
+    });
+    await publisher.del(game_id);
+    this.to(game_id).emit("sync-game-over", end_reason);
+  } catch (e) {
+    this.to(game_id).emit("oops", e);
+  }
+}
+
+export async function message(
+  this: Socket,
+  game_id: string,
+  user_id: string,
+  message: string
+) {
+  const active_game = await publisher.get(game_id);
+  if (!active_game) return;
+  const game: TCachedGame = JSON.parse(active_game);
+  if (user_id != game.whiteId && user_id != game.blackId) return;
+  this.to(game_id).emit("sync-message", {
+    author: user_id,
+    message: message,
   });
-  await publisher.del(game_id);
 }

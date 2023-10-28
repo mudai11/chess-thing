@@ -30,6 +30,7 @@ model Game {
   black User? @relation("black", fields: [blackId], references: [id])
   winner String?
   end_reason EndReason?
+  pgn String @default("")
   date DateTime @default(now())
 }
 

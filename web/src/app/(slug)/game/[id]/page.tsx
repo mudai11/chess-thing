@@ -1,4 +1,4 @@
-import ChessboardComponent from "@/components/Chessboard";
+import ChessboardComponent from "@/components/Game";
 
 interface pageProps {
   params: {
