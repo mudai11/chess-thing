@@ -33,7 +33,7 @@ export default async function SigninPage() {
         <div className="p-8">
           <Link
             href="/"
-            className={cn(buttonVariants({ variant: "ghost" }))}
+            className={cn(buttonVariants({ variant: "ghost" }), "rounded-lg")}
       
           >
             <ArrowLeft className="h-5 w-5" />
