@@ -43,8 +43,8 @@ async function main() {
   app.io.on("connection", injectSocket);
 
   try {
-    app.listen({ host: host, port: port }, (_, address) => {
-      console.log(`server listening on: ${address}`);
+    app.listen({ host: host, port: port }, () => {
+      console.log(`server listening on: http://localhost:${port}`);
     });
   } catch (e) {
     console.error("Server error: ", e);

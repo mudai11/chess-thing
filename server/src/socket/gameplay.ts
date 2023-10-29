@@ -139,6 +139,7 @@ export async function message(
   this: Socket,
   game_id: string,
   user_id: string,
+  username: string,
   message: string
 ) {
   const active_game = await publisher.get(game_id);
@@ -146,7 +147,7 @@ export async function message(
   const game: TCachedGame = JSON.parse(active_game);
   if (user_id != game.whiteId && user_id != game.blackId) return;
   this.to(game_id).emit("sync-message", {
-    author: user_id,
+    author: username,
     message: message,
   });
 }
