@@ -39,7 +39,7 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
       );
       if (data.message === "Success") {
         toast({
-          title: "Welcome back. Redirecting...",
+          title: "Welcome back.",
           description: "You've logged in successfully.",
         });
         refresh();

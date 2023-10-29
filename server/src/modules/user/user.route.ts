@@ -6,6 +6,7 @@ import {
   signinUserHandler,
   updateUserHandler,
   deleteSessionHandler,
+  deleteUserHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 import { $ref as sharedRef } from "../shared/response.schema";
@@ -78,6 +79,20 @@ export default async function userRoutes(app: FastifyInstance) {
       },
     },
     authenticateUserHandler
+  );
+
+  app.delete(
+    "/delete-user",
+    {
+      schema: {
+        body: $ref("deleteUserSchema"),
+        response: {
+          200: sharedRef("defaultSuccessResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
+        },
+      },
+    },
+    deleteUserHandler
   );
 
   app.get("/", getUsersHandler);

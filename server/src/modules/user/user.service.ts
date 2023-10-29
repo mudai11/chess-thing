@@ -94,6 +94,14 @@ async function getAuthenticatedUser(id: string) {
   });
 }
 
+async function deleteUser(id: string) {
+  return await db.user.delete({
+    where: {
+      id,
+    },
+  });
+}
+
 export {
   createUser,
   getUsers,
@@ -103,4 +111,5 @@ export {
   updateUserUsername,
   updateUserPassword,
   getAuthenticatedUser,
+  deleteUser,
 };

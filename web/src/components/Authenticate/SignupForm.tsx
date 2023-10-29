@@ -11,11 +11,13 @@ import { CreateUserSchema, createUserSchema } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/useToast";
+import { useRouter } from "next/navigation";
 import { env } from "@/../env";
 
 interface SignupFormProps extends HTMLAttributes<HTMLDivElement> {}
 
 export function SignupForm({ className, ...props }: SignupFormProps) {
+  const { push, refresh } = useRouter();
   const {
     register,
     handleSubmit,
@@ -30,14 +32,18 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
     try {
       const { data } = await axios.post(
         `${env.NEXT_PUBLIC_SERVER_URL}/api/users/create-user`,
-        payload
+        payload,
+        {
+          withCredentials: true,
+        }
       );
       if (data.message === "Success") {
         toast({
           title: "Welcome.",
           description: "Your account has been created successfully.",
         });
-        return;
+        refresh();
+        push("/");
       }
     } catch (e) {
       if (e instanceof AxiosError) {

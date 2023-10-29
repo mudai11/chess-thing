@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import { FastifyReply, FastifyRequest } from "fastify";
 import {
   createUser,
+  deleteUser,
   findUserById,
   findUserByUsername,
   getAuthenticatedUser,
@@ -17,14 +18,14 @@ import {
 } from "./user.schema";
 import { app } from "../../main";
 import { Prisma } from "@prisma/client";
+import { DeleteGameSchema } from "../game/game.schema";
 
 async function createUserHandler(
   request: FastifyRequest<{ Body: CreateUserSchema }>,
   reply: FastifyReply
 ) {
-  const body = request.body;
-
   try {
+    const body = request.body;
     const user = await createUser(body);
     const { id } = user;
     const token = app.jwt.sign({ id: id });
@@ -255,6 +256,23 @@ async function deleteSessionHandler(
     .send({ message: "Success" });
 }
 
+async function deleteUserHandler(
+  request: FastifyRequest<{
+    Body: DeleteGameSchema;
+  }>,
+  reply: FastifyReply
+) {
+  try {
+    const id = request.body.id;
+    await deleteUser(id);
+    return reply.status(200).send({
+      message: "Success",
+    });
+  } catch (e) {
+    return reply.status(500).send(e);
+  }
+}
+
 export {
   createUserHandler,
   getUsersHandler,
@@ -262,4 +280,5 @@ export {
   updateUserHandler,
   authenticateUserHandler,
   deleteSessionHandler,
+  deleteUserHandler,
 };

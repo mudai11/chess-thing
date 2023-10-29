@@ -72,9 +72,14 @@ const updateUserSchema = z.object({
     .optional(),
 });
 
+const deleteUserSchema = z.object({
+  id: z.string().min(1),
+});
+
 export type CreateUserSchema = z.infer<typeof createUserSchema>;
 export type SigninUserSchema = z.infer<typeof signinUserSchema>;
 export type UpdateUserSchema = z.infer<typeof updateUserSchema>;
+export type DeleteUserSchema = z.infer<typeof deleteUserSchema>;
 
 export const { schemas: userSchemas, $ref } = buildJsonSchemas(
   {
@@ -82,6 +87,7 @@ export const { schemas: userSchemas, $ref } = buildJsonSchemas(
     createUserResponseSchema,
     signinUserSchema,
     updateUserSchema,
+    deleteUserSchema,
   },
   { $id: "user" }
 );
