@@ -25,10 +25,21 @@ async function createUserHandler(
   const body = request.body;
 
   try {
-    await createUser(body);
-    return reply.status(201).send({
-      message: "Success",
-    });
+    const user = await createUser(body);
+    const { id } = user;
+    const token = app.jwt.sign({ id: id });
+
+    return reply
+      .status(201)
+      .setCookie("accessToken", token, {
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        maxAge: 10 * 24 * 60 * 60,
+      })
+      .send({
+        message: "Success",
+      });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
       if (e.code === "P2002") {
