@@ -11,6 +11,7 @@ import { CreateUserSchema, createUserSchema } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/useToast";
+import { env } from "@/../env";
 
 interface SignupFormProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -28,7 +29,7 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
     if (!isValid) return;
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL!}/api/users/create-user`,
+        `${env.NEXT_PUBLIC_SERVER_URL}/api/users/create-user`,
         payload
       );
       if (data.message === "Success") {

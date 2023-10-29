@@ -15,6 +15,8 @@ import { useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { User } from "@/../../server/src/types";
+import { env } from "@/../env";
+import { toast } from "@/hooks/useToast";
 
 interface UserMenuProps {
   user: User;
@@ -28,12 +30,12 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
   useEffect(() => {
     setUser(user);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const signoutHandler = async () => {
     try {
       const { data } = await axios.delete(
-        `${process.env.NEXT_PUBLIC_SERVER_URL!}/api/users/sign-out`,
+        `${env.NEXT_PUBLIC_SERVER_URL}/api/users/sign-out`,
         {
           withCredentials: true,
         }
@@ -45,7 +47,17 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
       }
     } catch (e) {
       if (e instanceof AxiosError) {
-        console.log(e.response?.data.error);
+        toast({
+          title: "We have a little problem.",
+          description: e.response?.data.error,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "An error has occured !",
+          description: "Could not sign you out right now, try again later.",
+          variant: "destructive",
+        });
       }
     }
   };
@@ -68,24 +80,16 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/" >
-            Home
-          </Link>
+          <Link href="/">Home</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href={`/@${user.username}`} >
-            Profile
-          </Link>
+          <Link href={`/@${user.username}`}>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/messages" >
-            Messages
-          </Link>
+          <Link href="/messages">Messages</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/settings" >
-            Settings
-          </Link>
+          <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

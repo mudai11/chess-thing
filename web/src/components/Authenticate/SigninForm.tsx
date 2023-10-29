@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/useToast";
 import { useRouter } from "next/navigation";
+import { env } from "@/../env";
 
 interface SigninFormProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -30,7 +31,7 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
     if (!isValid) return;
     try {
       const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_SERVER_URL!}/api/users/sign-in`,
+        `${env.NEXT_PUBLIC_SERVER_URL}/api/users/sign-in`,
         payload,
         {
           withCredentials: true,
@@ -38,8 +39,8 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
       );
       if (data.message === "Success") {
         toast({
-          title: "Welcome back.",
-          description: "You've logged in successfully. Redirecting...",
+          title: "Welcome back. Redirecting...",
+          description: "You've logged in successfully.",
         });
         refresh();
         push("/");

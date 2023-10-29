@@ -1,9 +1,10 @@
 import axios, { AxiosError } from "axios";
+import { env } from "@/../env";
 
 export async function useClientSession() {
   try {
     const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
+      `${env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
       { withCredentials: true }
     );
     return data;

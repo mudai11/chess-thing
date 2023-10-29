@@ -21,7 +21,7 @@ import StartGameButton from "./StartGameButton";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/store/store";
 import { env } from "@/../env";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Icons } from "../Icons";
 import { toast } from "@/hooks/useToast";
 
@@ -49,11 +49,23 @@ export function CreateLobbyDialog() {
       );
       push(`/game/${data.message}`);
       toast({
-        title: "Game lobby created",
+        title: "Game lobby created, redirecting...",
         description: "A game lobby is successfully created.",
       });
     } catch (e) {
-      console.log(e);
+      if (e instanceof AxiosError) {
+        toast({
+          title: "We have a little problem.",
+          description: e.response?.data.error,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "An error has occured !",
+          description: "Could not sign you out right now, try again later.",
+          variant: "destructive",
+        });
+      }
     } finally {
       setLoading(false);
     }
