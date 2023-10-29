@@ -13,7 +13,7 @@ async function createGameHandler(
   try {
     const game = await createGame(id, side);
     const game_cache = { ...game, host: id, players: 1 };
-    publisher.set(game.id, JSON.stringify(game_cache));
+    await publisher.set(game.id, JSON.stringify(game_cache));
     return reply.status(201).send({
       message: game.id,
     });
