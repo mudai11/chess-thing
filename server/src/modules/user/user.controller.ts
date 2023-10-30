@@ -181,7 +181,7 @@ async function updateUserHandler(
     }
   }
 
-  return reply.status(400).send({
+  return reply.status(422).send({
     error: "Bad request",
   });
 }
@@ -190,70 +190,79 @@ async function authenticateUserHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const token = request.cookies["accessToken"];
-  if (!token) {
-    return reply.status(401).send({
-      error: "You're not logged in.",
-    });
-  }
-  const decoded: {
-    id: string;
-    iat: string;
-  } | null = app.jwt.decode(token);
-  if (!decoded) {
-    return reply.status(400).send({
-      error: "Access token is invalid.",
-    });
-  }
+  try {
+    const token = request.cookies["accessToken"];
+    if (!token) {
+      return reply.status(401).send({
+        error: "You're not logged in.",
+      });
+    }
+    const decoded: {
+      id: string;
+      iat: string;
+    } | null = app.jwt.decode(token);
+    if (!decoded) {
+      return reply.status(400).send({
+        error: "Access token is invalid.",
+      });
+    }
 
-  const id = decoded.id;
-  const user = await getAuthenticatedUser(id);
-  if (!user) {
-    return reply.status(400).send({
-      error: "Token does not associate to any user.",
-    });
-  }
+    const id = decoded.id;
+    const user = await getAuthenticatedUser(id);
+    if (!user) {
+      return reply.status(400).send({
+        error: "Token does not associate to any user.",
+      });
+    }
 
-  return reply.status(200).send(user);
+    return reply.status(200).send(user);
+  } catch (e) {
+    console.log(e);
+    return reply.status(500).send(e);
+  }
 }
 
 async function deleteSessionHandler(
   request: FastifyRequest,
   reply: FastifyReply
 ) {
-  const token = request.cookies["accessToken"];
-  if (!token) {
-    return reply.status(401).send({
-      error: "You're not logged in.",
-    });
-  }
-  const decoded: {
-    id: string;
-    iat: string;
-  } | null = app.jwt.decode(token);
-  if (!decoded) {
-    return reply.status(400).send({
-      error: "Access token is invalid.",
-    });
-  }
+  try {
+    const token = request.cookies["accessToken"];
+    if (!token) {
+      return reply.status(401).send({
+        error: "You're not logged in.",
+      });
+    }
+    const decoded: {
+      id: string;
+      iat: string;
+    } | null = app.jwt.decode(token);
+    if (!decoded) {
+      return reply.status(400).send({
+        error: "Access token is invalid.",
+      });
+    }
 
-  const id = decoded.id;
-  const user = await getAuthenticatedUser(id);
-  if (!user) {
-    return reply.status(400).send({
-      error: "Token does not associate to any user.",
-    });
-  }
+    const id = decoded.id;
+    const user = await getAuthenticatedUser(id);
+    if (!user) {
+      return reply.status(400).send({
+        error: "Token does not associate to any user.",
+      });
+    }
 
-  return reply
-    .status(200)
-    .setCookie("accessToken", "", {
-      path: "/",
-      httpOnly: true,
-      secure: true,
-      maxAge: 0,
-    })
-    .send({ message: "Success" });
+    return reply
+      .status(200)
+      .setCookie("accessToken", "", {
+        path: "/",
+        httpOnly: true,
+        secure: true,
+        maxAge: 0,
+      })
+      .send({ message: "Success" });
+  } catch (e) {
+    return reply.status(500).send(e);
+  }
 }
 
 async function deleteUserHandler(
