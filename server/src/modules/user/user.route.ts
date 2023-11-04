@@ -4,9 +4,11 @@ import {
   createUserHandler,
   getUsersHandler,
   signinUserHandler,
-  updateUserHandler,
   deleteSessionHandler,
   deleteUserHandler,
+  updateUserUsernameHandler,
+  updateUserEmailHandler,
+  updateUserPasswordHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 import { $ref as sharedRef } from "../shared/response.schema";
@@ -41,18 +43,48 @@ export default async function userRoutes(app: FastifyInstance) {
   );
 
   app.post(
-    "/update-user",
+    "/update-user/username",
     {
       preHandler: [app.authenticate],
       schema: {
-        body: $ref("updateUserSchema"),
+        body: $ref("userUsernameSchema"),
         response: {
           200: sharedRef("defaultSuccessResponseSchema"),
           400: sharedRef("defaultErrorResponseSchema"),
         },
       },
     },
-    updateUserHandler
+    updateUserUsernameHandler
+  );
+
+  app.post(
+    "/update-user/email",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        body: $ref("userEmailSchema"),
+        response: {
+          200: sharedRef("defaultSuccessResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
+        },
+      },
+    },
+    updateUserEmailHandler
+  );
+
+  app.post(
+    "/update-user/password",
+    {
+      preHandler: [app.authenticate],
+      schema: {
+        body: $ref("updateUserPasswordSchema"),
+        response: {
+          200: sharedRef("defaultSuccessResponseSchema"),
+          400: sharedRef("defaultErrorResponseSchema"),
+        },
+      },
+    },
+    updateUserPasswordHandler
   );
 
   app.delete(

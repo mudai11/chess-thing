@@ -28,7 +28,7 @@ export async function injectPlugins(
       try {
         await request.jwtVerify();
       } catch (e) {
-        reply.status(500).send(e);
+        return reply.status(500).send(e);
       }
     }
   );
@@ -39,7 +39,7 @@ export async function injectPlugins(
 
   await app.register(io, {
     cors: {
-      origin: [cors_origin],
+      origin: cors_origin,
     },
   });
 }
