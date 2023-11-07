@@ -17,10 +17,12 @@ import {
   UpdateUserPasswordSchema,
   UserEmailSchema,
   UserUsernameSchema,
+  updateUserPasswordSchema,
 } from "./user.schema";
 import { app } from "../../main";
 import { Prisma } from "@prisma/client";
 import { DeleteGameSchema } from "../game/game.schema";
+import { ZodError } from "zod";
 
 async function createUserHandler(
   request: FastifyRequest<{ Body: CreateUserSchema }>,
@@ -53,7 +55,7 @@ async function createUserHandler(
     }
     return reply
       .status(500)
-      .send("Could not sign you up right now, try again later.");
+      .send({ error: "Could not sign you up right now, try again later." });
   }
 }
 
@@ -65,7 +67,7 @@ async function getUsersHandler(_: FastifyRequest, reply: FastifyReply) {
     console.log(e);
     return reply
       .status(500)
-      .send("Could not get users right now, try again later.");
+      .send({ error: "Could not get users right now, try again later." });
   }
 }
 
@@ -105,7 +107,7 @@ async function signinUserHandler(
   } catch (e) {
     return reply
       .status(500)
-      .send("Could not sign you in right now, try again later.");
+      .send({ error: "Could not sign you in right now, try again later." });
   }
 }
 
@@ -163,7 +165,7 @@ async function updateUserUsernameHandler(
     }
     return reply
       .status(500)
-      .send("Could not update username right now, try again later.");
+      .send({ error: "Could not update username right now, try again later." });
   }
 }
 
@@ -217,7 +219,7 @@ async function updateUserEmailHandler(
     }
     return reply
       .status(500)
-      .send("Could not update email right now, try again later.");
+      .send({ error: "Could not update email right now, try again later." });
   }
 }
 
@@ -227,43 +229,44 @@ async function updateUserPasswordHandler(
   }>,
   reply: FastifyReply
 ) {
-  const body = request.body;
-  const token = request.cookies["accessToken"];
-  if (!token) {
-    return reply.status(401).send({
-      error: "Unauthorized.",
-    });
-  }
-  const decoded: {
-    id: string;
-    iat: string;
-  } | null = app.jwt.decode(token);
-  if (!decoded) {
-    return reply.status(400).send({
-      error: "Access token is invalid.",
-    });
-  }
-  const id = decoded.id;
-  const user = await findUserById(id);
-
-  if (!user) {
-    return reply.status(400).send({
-      error: "Token does not associate to any user.",
-    });
-  }
-  const isValid = await bcrypt.compare(body.old_password, user.password);
-  if (!isValid) {
-    return reply.status(401).send({
-      error: "Your old password is incorrect.",
-    });
-  }
-  const isMatch = await bcrypt.compare(body.new_password, user.password);
-  if (isMatch) {
-    return reply.status(400).send({
-      error: "Your new password cannot be your old password",
-    });
-  }
   try {
+    const body = request.body;
+    updateUserPasswordSchema.parse(body);
+    const token = request.cookies["accessToken"];
+    if (!token) {
+      return reply.status(401).send({
+        error: "Unauthorized.",
+      });
+    }
+    const decoded: {
+      id: string;
+      iat: string;
+    } | null = app.jwt.decode(token);
+    if (!decoded) {
+      return reply.status(400).send({
+        error: "Access token is invalid.",
+      });
+    }
+    const id = decoded.id;
+    const user = await findUserById(id);
+
+    if (!user) {
+      return reply.status(400).send({
+        error: "Token does not associate to any user.",
+      });
+    }
+    const isValid = await bcrypt.compare(body.old_password, user.password);
+    if (!isValid) {
+      return reply.status(401).send({
+        error: "Your old password is incorrect.",
+      });
+    }
+    const isMatch = await bcrypt.compare(body.new_password, user.password);
+    if (isMatch) {
+      return reply.status(400).send({
+        error: "Your new password cannot be your old password",
+      });
+    }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(body.new_password, salt);
     await updateUserPassword(id, hashedPassword);
@@ -271,10 +274,12 @@ async function updateUserPasswordHandler(
       message: "Success",
     });
   } catch (e) {
-    console.log(e);
+    if (e instanceof ZodError) {
+      return reply.status(422).send({ error: e.errors[0].message });
+    }
     return reply
       .status(500)
-      .send("Could not update password right now, try again later.");
+      .send({ error: "Could not update password right now, try again later." });
   }
 }
 
@@ -309,10 +314,11 @@ async function authenticateUserHandler(
 
     return reply.status(200).send(user);
   } catch (e) {
-    console.log(e);
     return reply
       .status(500)
-      .send("Could not authenticate you right now, try again later.");
+      .send({
+        error: "Could not authenticate you right now, try again later.",
+      });
   }
 }
 
@@ -357,7 +363,7 @@ async function deleteSessionHandler(
   } catch (e) {
     return reply
       .status(500)
-      .send("Could not sign you out right now, try again later.");
+      .send({ error: "Could not sign you out right now, try again later." });
   }
 }
 
@@ -376,7 +382,7 @@ async function deleteUserHandler(
   } catch (e) {
     return reply
       .status(500)
-      .send("Could not delete user right now, try again later.");
+      .send({ error: "Could not delete user right now, try again later." });
   }
 }
 

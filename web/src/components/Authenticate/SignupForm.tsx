@@ -128,6 +128,25 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
               )}
             </p>
           </div>
+          <div className="grid gap-1">
+            <Label className="text-left" htmlFor="password">
+              Confirm password
+            </Label>
+            <Input
+              id="password"
+              placeholder="confirm password"
+              type="password"
+              autoCapitalize="none"
+              autoComplete="password"
+              autoCorrect="off"
+              disabled={isSubmitting}
+              {...register("confirm_password")}
+              className="dark:focus-visible:ring-amber-500"
+            />
+            <p className="text-red-500 h-4 text-sm">
+              {errors.confirm_password && errors.confirm_password.message}
+            </p>
+          </div>
           <Button disabled={isSubmitting} className="mt-2">
             {isSubmitting && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />

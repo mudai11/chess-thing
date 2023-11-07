@@ -72,7 +72,7 @@ export default async function SignupPage() {
                 href="/sign-in"
                 className={cn(buttonVariants({ variant: "link" }))}
               >
-                Login
+                Sign in
               </Link>
             </div>
           </div>

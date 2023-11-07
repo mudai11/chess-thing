@@ -20,7 +20,7 @@ async function createGameHandler(
   } catch (e) {
     return reply
       .status(500)
-      .send("Could not create a game right now, try again later.");
+      .send({ error: "Could not create a game right now, try again later." });
   }
 }
 
@@ -38,7 +38,7 @@ async function deleteGameHandler(
   } catch (e) {
     return reply
       .status(500)
-      .send("Could not delete game right now, try again later.");
+      .send({ error: "Could not delete game right now, try again later." });
   }
 }
 
@@ -49,7 +49,7 @@ async function getGamesHandler(_: FastifyRequest, reply: FastifyReply) {
   } catch (e) {
     return reply
       .status(500)
-      .send("Could not get games right now, try again later.");
+      .send({ error: "Could not get games right now, try again later." });
   }
 }
 

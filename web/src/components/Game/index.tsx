@@ -3,7 +3,7 @@
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import { useState, useEffect, FC } from "react";
-import useUserStore from "@/store/store";
+import { useUserStore } from "@/store/store";
 import io from "socket.io-client";
 import { env } from "@/../env";
 

@@ -27,8 +27,11 @@ export async function injectPlugins(
     async (request: FastifyRequest, reply: FastifyReply) => {
       try {
         await request.jwtVerify();
-      } catch (e) {
-        return reply.status(500).send(e);
+      } catch (e: any) {
+        if (e.statusCode === 401) {
+          return reply.status(401).send({ error: "Unauthorized" });
+        }
+        return reply.status(500).send({ error: "Could not verify token" });
       }
     }
   );

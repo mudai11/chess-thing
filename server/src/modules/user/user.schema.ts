@@ -13,8 +13,8 @@ const userCore = {
       required_error: "Username is required",
       invalid_type_error: "Username must be a string",
     })
-    .min(5)
-    .max(10),
+    .min(5, { message: "Username must be atleast 5 characters" })
+    .max(10, { message: "Username must not be above 10 characters" }),
 };
 
 const createUserSchema = z.object({
@@ -24,7 +24,7 @@ const createUserSchema = z.object({
       required_error: "Password is required",
       invalid_type_error: "Password must be a string",
     })
-    .min(8),
+    .min(8, { message: "Password must be atleast 8 characters" }),
 });
 
 const createUserResponseSchema = z.object({
@@ -38,14 +38,14 @@ const signinUserSchema = z.object({
       required_error: "Username is required",
       invalid_type_error: "Username must be a string",
     })
-    .min(5)
-    .max(10),
+    .min(5, { message: "Username must be atleast 5 characters" })
+    .max(10, { message: "Username must not be above 10 characters" }),
   password: z
     .string({
       required_error: "Password is required",
       invalid_type_error: "Password must be a string",
     })
-    .min(8),
+    .min(8, { message: "Password must be atleast 8 characters" }),
 });
 const updateUserSchema = z.object({
   email: z
@@ -60,15 +60,15 @@ const updateUserSchema = z.object({
       required_error: "Username is required",
       invalid_type_error: "Username must be a string",
     })
-    .min(5)
-    .max(10)
+    .min(5, { message: "Username must be atleast 5 characters" })
+    .max(10, { message: "Username must not be above 10 characters" })
     .optional(),
   password: z
     .string({
       required_error: "Password is required",
       invalid_type_error: "Password must be a string",
     })
-    .min(8)
+    .min(8, { message: "Password must be atleast 8 characters" })
     .optional(),
 });
 
@@ -78,8 +78,8 @@ const userUsernameSchema = z.object({
       required_error: "Username is required",
       invalid_type_error: "Username must be a string",
     })
-    .min(5)
-    .max(10),
+    .min(5, { message: "Username must be atleast 5 characters" })
+    .max(10, { message: "Username must not be above 10 characters" }),
 });
 
 const userEmailSchema = z.object({
@@ -97,26 +97,37 @@ const userPasswordSchema = z.object({
       required_error: "Password is required",
       invalid_type_error: "Password must be a string",
     })
-    .min(8),
+    .min(8, { message: "Password must be atleast 8 characters" }),
 });
 
-const updateUserPasswordSchema = z.object({
-  old_password: z
-    .string({
-      required_error: "Old password is required",
-      invalid_type_error: "Old password must be a string",
-    })
-    .min(8),
-  new_password: z
-    .string({
-      required_error: "Password is required",
-      invalid_type_error: "Password must be a string",
-    })
-    .min(8),
-});
+export const updateUserPasswordSchema = z
+  .object({
+    old_password: z
+      .string({
+        required_error: "Old password is required",
+        invalid_type_error: "Old password must be a string",
+      })
+      .min(8, { message: "Old password must be atleast 8 characters" }),
+    new_password: z
+      .string({
+        required_error: "Password is required",
+        invalid_type_error: "Password must be a string",
+      })
+      .min(8, { message: "New password must be atleast 8 characters" }),
+    confirm_password: z
+      .string({
+        required_error: "Confirm password is required",
+        invalid_type_error: "Confirm password is invalid",
+      })
+      .min(1, { message: "Confirm Password is required" }),
+  })
+  .refine((data) => data.new_password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"],
+  });
 
 const deleteUserSchema = z.object({
-  id: z.string().min(1),
+  id: z.string().min(1, { message: "User id is required" }),
 });
 
 export type CreateUserSchema = z.infer<typeof createUserSchema>;

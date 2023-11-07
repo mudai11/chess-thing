@@ -1,9 +1,9 @@
 "use client";
 
 import { Button } from "../ui/button";
-import { Play, UserPlus2 } from "lucide-react";
+import { UserPlus2 } from "lucide-react";
 import Link from "next/link";
-import useUserStore from "@/store/store";
+import { useUserStore } from "@/store/store";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { CreateLobbyDialog } from "./CreateGameDialog";

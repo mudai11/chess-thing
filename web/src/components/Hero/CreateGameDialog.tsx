@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { useCallback, useState } from "react";
 import StartGameButton from "./StartGameButton";
 import { useRouter } from "next/navigation";
-import useUserStore from "@/store/store";
+import { useUserStore } from "@/store/store";
 import { env } from "@/../env";
 import axios, { AxiosError } from "axios";
 import { Icons } from "../Icons";
