@@ -3,7 +3,7 @@
 import { Button } from "../ui/button";
 import { UserPlus2 } from "lucide-react";
 import Link from "next/link";
-import { useUserStore } from "@/store/store";
+import useUserStore from "@/store/user-store";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import { CreateLobbyDialog } from "./CreateGameDialog";

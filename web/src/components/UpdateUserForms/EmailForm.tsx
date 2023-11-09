@@ -62,7 +62,7 @@ const EmailForm: FC<EmailFormProps> = ({ user }) => {
       }
       toast({
         title: "An error has occured!",
-        description: "Could update your email right now, try again later.",
+        description: "Could not update your email right now, try again later.",
         variant: "destructive",
       });
     }

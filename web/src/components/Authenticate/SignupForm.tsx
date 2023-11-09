@@ -129,11 +129,11 @@ export function SignupForm({ className, ...props }: SignupFormProps) {
             </p>
           </div>
           <div className="grid gap-1">
-            <Label className="text-left" htmlFor="password">
+            <Label className="text-left" htmlFor="confirm_password">
               Confirm password
             </Label>
             <Input
-              id="password"
+              id="confirm_password"
               placeholder="confirm password"
               type="password"
               autoCapitalize="none"

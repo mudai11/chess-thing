@@ -3,13 +3,11 @@
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import { useState, useEffect, FC } from "react";
-import { useUserStore } from "@/store/store";
-import io from "socket.io-client";
-import { env } from "@/../env";
+import useUserStore from "@/store/user-store";
+import { SocketService } from "@/utils/socket";
 
-const socket = io(env.NEXT_PUBLIC_SERVER_URL, {
-  autoConnect: false,
-});
+const socket_service = SocketService.getInstance();
+const socket = socket_service.getSocket();
 
 interface ChessboardComponentProps {
   id: string;

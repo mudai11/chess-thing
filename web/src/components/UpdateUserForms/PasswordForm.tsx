@@ -84,9 +84,9 @@ const PasswordForm = () => {
             </p>
           </div>
           <div className="relative grid gap-2">
-            <Label htmlFor="password">New Password</Label>
+            <Label htmlFor="new_password">New Password</Label>
             <Input
-              id="password"
+              id="new_password"
               className="w-[400px]"
               size={32}
               type="password"

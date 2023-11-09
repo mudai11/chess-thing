@@ -22,5 +22,7 @@ export const useServerSession = cache(async () => {
         return;
       }
     }
+    console.log(e);
+    return;
   }
 });

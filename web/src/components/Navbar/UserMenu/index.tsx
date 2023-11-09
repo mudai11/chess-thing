@@ -10,7 +10,7 @@ import {
 import { FC } from "react";
 import UserAvatar from "./UserAvatar";
 import Link from "next/link";
-import userStore from "@/store/store";
+import userStore from "@/store/user-store";
 import { useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";

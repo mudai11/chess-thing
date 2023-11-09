@@ -1,28 +1,14 @@
+import { Game } from "@/../../server/src/types";
+import type { Chess } from "chess.js";
 import { createSelectors } from "./createSelectors";
 import { create } from "zustand";
-import { User, Game } from "@/../../server/src/types";
-
-type userStorState = {
-  user: User | null;
-};
-
-type userStorAction = {
-  setUser: (user: userStorState["user"]) => void;
-  clearUser: () => void;
-};
-
-const userStore = create<userStorState & userStorAction>()((set) => ({
-  user: null,
-  setUser: (user) => set(() => ({ user: user })),
-  clearUser: () => set(() => ({ user: null }), true),
-}));
-
-export const useUserStore = createSelectors(userStore);
 
 type lobbyStoreState = {
   game: Game | null;
   host: string | null;
   players_number: number | null;
+  actualGame: Chess | null;
+  side: "b" | "w" | "s";
 };
 
 type lobbyStoreAction = {
@@ -36,6 +22,8 @@ const lobbyStore = create<lobbyStoreState & lobbyStoreAction>()((set) => ({
   game: null,
   host: null,
   players_number: null,
+  actualGame: null,
+  side: "s",
   setGame: (game) => set(() => ({ game: game })),
   setHost: (host) => set(() => ({ host: host })),
   setPlayersNumber: (players_number) =>
@@ -45,14 +33,12 @@ const lobbyStore = create<lobbyStoreState & lobbyStoreAction>()((set) => ({
       () => ({
         game: null,
         host: null,
-        white: null,
-        black: null,
         players_number: null,
-        winner: null,
-        end_reason: null,
+        actualGame: null,
+        side: "s",
       }),
       true
     ),
 }));
 
-export const useLobbyStore = createSelectors(lobbyStore);
+export default createSelectors(lobbyStore);

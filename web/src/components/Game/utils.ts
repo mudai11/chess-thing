@@ -3,7 +3,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type { Chess } from "chess.js";
 
 type Lobby = Game & {
-  players: number;
+  players_number: number;
   host: string;
   actualGame: Chess;
   side: "b" | "w" | "s";

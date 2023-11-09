@@ -6,7 +6,7 @@ import { SigninForm } from "@/components/Authenticate/SigninForm";
 import Image from "next/image";
 import banner from "../../../../public/assets/banner/banner.webp";
 import { ArrowLeft } from "lucide-react";
-import { getImage } from "@/lib/getImage";
+import { getImage } from "@/utils/getImage";
 
 export const metadata: Metadata = {
   title: "Chess Thing | Sign in",
@@ -34,7 +34,6 @@ export default async function SigninPage() {
           <Link
             href="/"
             className={cn(buttonVariants({ variant: "ghost" }), "rounded-lg")}
-      
           >
             <ArrowLeft className="h-5 w-5" />
           </Link>
