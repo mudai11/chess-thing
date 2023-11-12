@@ -9,7 +9,7 @@ export const useServerSession = cache(async () => {
   const cookie = headersList.get("cookie");
 
   try {
-    const { data } = await axios.get(`${env.SERVER_URL}/api/users/me`, {
+    const { data } = await axios.get(`${env.SERVER_URL}/api/auth/me`, {
       headers: {
         cookie: cookie,
       },

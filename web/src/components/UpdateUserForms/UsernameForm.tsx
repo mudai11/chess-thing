@@ -43,7 +43,7 @@ const UserNameForm: FC<UserNameFormProps> = ({ user }) => {
   });
   const onSubmit: SubmitHandler<UpdateUserUsernameSchema> = async (payload) => {
     try {
-      const { data } = await axios.post(
+      const { data } = await axios.patch(
         `${env.NEXT_PUBLIC_SERVER_URL}/api/users/update-user/username`,
         payload,
         { withCredentials: true }

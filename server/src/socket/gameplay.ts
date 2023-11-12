@@ -10,20 +10,29 @@ export async function joinLobby(
   game_id: string,
   user_id: string
 ) {
+  console.log(`user ${user_id} trying to join ${game_id}`);
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
-  const host = game.host;
-  if (host === user_id) {
+  if (game.host === user_id) {
+    console.log(`user ${user_id} joined ${game_id} as host`);
+    this.join(game_id);
+    const side = game.blackId ? "b" : "w";
+    this.nsp.to(game_id).emit("joined-lobby", side, user_id);
+    console.log(
+      `sending joined lobby event with details : user ${user_id}, side: ${side}, game ${game_id}`
+    );
+    return;
+  }
+  if (game.players === 2) {
+    console.log(`user ${user_id} joined ${game_id} while game is on`);
     this.join(game_id);
     return;
   }
-  const player_count = game.players;
-  if (player_count === 2) {
-    this.join(game_id);
-    return;
-  }
+  console.log(`user ${user_id} joined ${game_id} as second player`);
   this.join(game_id);
+  const side = game.blackId ? "w" : "b";
+  this.nsp.to(game_id).emit("joined-lobby", side, user_id);
   game.players = 2;
   game.whiteId ? (game.blackId = user_id) : (game.whiteId = user_id);
   await publisher.set(game_id, JSON.stringify(game));
@@ -32,10 +41,13 @@ export async function joinLobby(
 export async function move(
   this: Socket,
   side: string,
-  move: { to: string; from: string },
+  move: { to: string; from: string; promotion: string },
   game_id: string,
   user_id: string
 ) {
+  console.log(
+    `user ${user_id} is trying to move from ${move.from} to ${move.to}`
+  );
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
@@ -49,11 +61,11 @@ export async function leaveLobby(
   game_id: string,
   user_id: string
 ) {
+  console.log(`user ${user_id} trying to leave ${game_id}`);
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
-  const player_count = game.players;
-  if (player_count === 1) {
+  if (game.players === 1) {
     try {
       await db.game.delete({
         where: {

@@ -106,10 +106,10 @@
 .hero-play-button {
   background: linear-gradient(
     var(--gradient-angle),
-    hsla(38, 92%, 50%, 0.7),
-    hsla(38, 92%, 50%, 0.1),
-    #f59e0b,
-    hsla(38, 92%, 50%, 0.3)
+    hsla(209, 34%, 45%, 0.7),
+    hsla(209, 34%, 45%, 0.1),
+    #4b7399,
+    hsla(209, 34%, 45%, 0.3)
   );
   animation: gradient-rotate 9s linear infinite reverse;
 }
@@ -131,4 +131,8 @@
   100% {
     --gradient-angle: 0deg;
   }
+}
+
+.container {
+  @apply mx-auto max-w-[1400px] px-4 md:px-24;
 }

@@ -9,8 +9,8 @@ import { ArrowLeft } from "lucide-react";
 import { getImage } from "@/utils/getImage";
 
 export const metadata: Metadata = {
-  title: "Chess Thing | Sign up",
-  description: "Sign up page for Chess Thing.",
+  title: "Sign up | Chess Thing",
+  description: "Sign up to Chess Thing.",
 };
 
 export default async function SignupPage() {
@@ -40,7 +40,7 @@ export default async function SignupPage() {
           <div className="mx-auto flex w-full pt-14 flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">
-                <span className="text-amber-500">Cr</span>eate an account
+                <span className="text-[#4a7dac]">Cr</span>eate an account
               </h1>
               <p className="text-sm text-muted-foreground">
                 Dive into an exciting game of chess immediately.
@@ -66,7 +66,7 @@ export default async function SignupPage() {
             </p>
             <div className="flex flex-row items-center justify-center">
               <p>
-                Already got an account <span className="text-amber-500">?</span>{" "}
+                Already got an account <span className="text-[#4a7dac]">?</span>{" "}
               </p>{" "}
               <Link
                 href="/sign-in"

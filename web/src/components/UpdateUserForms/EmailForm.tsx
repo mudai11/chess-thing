@@ -40,7 +40,7 @@ const EmailForm: FC<EmailFormProps> = ({ user }) => {
   });
   const onSubmit: SubmitHandler<UpdateUserEmailSchema> = async (payload) => {
     try {
-      const { data } = await axios.post(
+      const { data } = await axios.patch(
         `${env.NEXT_PUBLIC_SERVER_URL}/api/users/update-user/email`,
         payload,
         { withCredentials: true }

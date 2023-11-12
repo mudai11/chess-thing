@@ -1,6 +1,5 @@
 import { FastifyInstance } from "fastify";
 import {
-  authenticateUserHandler,
   createUserHandler,
   getUsersHandler,
   signinUserHandler,
@@ -42,7 +41,7 @@ export default async function userRoutes(app: FastifyInstance) {
     signinUserHandler
   );
 
-  app.post(
+  app.patch(
     "/update-user/username",
     {
       preHandler: [app.authenticate],
@@ -57,7 +56,7 @@ export default async function userRoutes(app: FastifyInstance) {
     updateUserUsernameHandler
   );
 
-  app.post(
+  app.patch(
     "/update-user/email",
     {
       preHandler: [app.authenticate],
@@ -72,7 +71,7 @@ export default async function userRoutes(app: FastifyInstance) {
     updateUserEmailHandler
   );
 
-  app.post(
+  app.patch(
     "/update-user/password",
     {
       preHandler: [app.authenticate],
@@ -99,18 +98,6 @@ export default async function userRoutes(app: FastifyInstance) {
       },
     },
     deleteSessionHandler
-  );
-
-  app.get(
-    "/me",
-    {
-      schema: {
-        response: {
-          400: sharedRef("defaultErrorResponseSchema"),
-        },
-      },
-    },
-    authenticateUserHandler
   );
 
   app.delete(

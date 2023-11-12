@@ -5,7 +5,6 @@ import {
   deleteUser,
   findUserById,
   findUserByUsername,
-  getAuthenticatedUser,
   getUsers,
   updateUserEmail,
   updateUserPassword,
@@ -81,14 +80,14 @@ async function signinUserHandler(
     const user = await findUserByUsername(body.username);
     if (!user) {
       return reply.status(401).send({
-        error: "Invalid username or password",
+        error: "Invalid username or password.",
       });
     }
 
-    const isMatch = await bcrypt.compare(body.password, user.password);
+    const isMatch = await bcrypt.compare(body.password, user.password!);
     if (!isMatch) {
       return reply.status(401).send({
-        error: "Invalid username or password",
+        error: "Invalid username or password.",
       });
     }
 
@@ -145,7 +144,7 @@ async function updateUserUsernameHandler(
 
   if (body.username.toLocaleLowerCase() === user.username.toLocaleLowerCase()) {
     return reply.status(400).send({
-      error: "Your new username cannot be your old username",
+      error: "Your new username cannot be your old username.",
     });
   }
 
@@ -202,7 +201,7 @@ async function updateUserEmailHandler(
 
   if (body.email.toLocaleLowerCase() === user.email.toLocaleLowerCase()) {
     return reply.status(400).send({
-      error: "Your new email cannot be your old email",
+      error: "Your new email cannot be your old email.",
     });
   }
   try {
@@ -255,16 +254,16 @@ async function updateUserPasswordHandler(
         error: "Token does not associate to any user.",
       });
     }
-    const isValid = await bcrypt.compare(body.old_password, user.password);
+    const isValid = await bcrypt.compare(body.old_password, user.password!);
     if (!isValid) {
       return reply.status(401).send({
         error: "Your old password is incorrect.",
       });
     }
-    const isMatch = await bcrypt.compare(body.new_password, user.password);
+    const isMatch = await bcrypt.compare(body.new_password, user.password!);
     if (isMatch) {
       return reply.status(400).send({
-        error: "Your new password cannot be your old password",
+        error: "Your new password cannot be your old password.",
       });
     }
     const salt = await bcrypt.genSalt(10);
@@ -280,45 +279,6 @@ async function updateUserPasswordHandler(
     return reply
       .status(500)
       .send({ error: "Could not update password right now, try again later." });
-  }
-}
-
-async function authenticateUserHandler(
-  request: FastifyRequest,
-  reply: FastifyReply
-) {
-  try {
-    const token = request.cookies["accessToken"];
-    if (!token) {
-      return reply.status(401).send({
-        error: "You're not logged in.",
-      });
-    }
-    const decoded: {
-      id: string;
-      iat: string;
-    } | null = app.jwt.decode(token);
-    if (!decoded) {
-      return reply.status(400).send({
-        error: "Access token is invalid.",
-      });
-    }
-
-    const id = decoded.id;
-    const user = await getAuthenticatedUser(id);
-    if (!user) {
-      return reply.status(400).send({
-        error: "Token does not associate to any user.",
-      });
-    }
-
-    return reply.status(200).send(user);
-  } catch (e) {
-    return reply
-      .status(500)
-      .send({
-        error: "Could not authenticate you right now, try again later.",
-      });
   }
 }
 
@@ -344,7 +304,7 @@ async function deleteSessionHandler(
     }
 
     const id = decoded.id;
-    const user = await getAuthenticatedUser(id);
+    const user = await findUserById(id);
     if (!user) {
       return reply.status(400).send({
         error: "Token does not associate to any user.",
@@ -393,7 +353,6 @@ export {
   updateUserUsernameHandler,
   updateUserEmailHandler,
   updateUserPasswordHandler,
-  authenticateUserHandler,
   deleteSessionHandler,
   deleteUserHandler,
 };

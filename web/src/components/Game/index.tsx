@@ -2,9 +2,12 @@
 
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
-import { useState, useEffect, FC } from "react";
+import { useState, useEffect, FC, useReducer } from "react";
 import useUserStore from "@/store/user-store";
 import { SocketService } from "@/utils/socket";
+import { lobbyReducer, squareReducer } from "./reducers";
+import type { Move, Square } from "chess.js";
+import { injectSocket } from "./socket";
 
 const socket_service = SocketService.getInstance();
 const socket = socket_service.getSocket();
@@ -14,61 +17,186 @@ interface ChessboardComponentProps {
 }
 
 const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
-  const [game, updateGame] = useState(new Chess());
   const user = useUserStore.use.user();
+  const [lobby, updateLobby] = useReducer(lobbyReducer, {
+    png: "",
+    black: null,
+    white: null,
+    black_connected: null,
+    white_connected: null,
+    game: new Chess(),
+    side: "s",
+    end_reason: null,
+  });
+  const [customSquares, updateCustomSquares] = useReducer(squareReducer, {
+    options: {},
+    lastMove: {},
+    rightClicked: {},
+    check: {},
+  });
+  const [navFen, setNavFen] = useState<string | null>(null);
+  const [navIndex, setNavIndex] = useState<number | null>(null);
 
   useEffect(() => {
+    if (!user) return;
     socket.connect();
-    socket.on("connect", () => {
-      if (user) socket.emit("join-lobby", id, user.id);
-    });
+    injectSocket(socket, id, user.id, updateLobby, makeMove);
 
     return () => {
       if (user) socket.emit("leave-lobby", id, user.id);
       socket.removeAllListeners();
       socket.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, user]);
 
-  useEffect(() => {
-    socket.on("sync-move", (_, move) => {
-      const tempGame = new Chess();
-      tempGame.loadPgn(game.pgn());
-      const valid = tempGame.moves();
-      if (!valid.includes(move.to)) {
-        return false;
-      }
-      const new_move = tempGame.move(move);
+  function makeMove(m: { from: string; to: string; promotion?: string }) {
+    try {
+      const result = lobby.game!.move(m);
+      if (!result) return new Error("Invalid move");
 
-      if (new_move) {
-        updateGame(tempGame);
+      setNavFen(null);
+      setNavIndex(null);
+      updateLobby({
+        type: "setPng",
+        payload: lobby.game!.pgn(),
+      });
+      let kingSquare = undefined;
+      if (lobby.game!.inCheck()) {
+        const kingPos = lobby.game!.board().reduce((acc, row, index) => {
+          const squareIndex = row.findIndex(
+            (square) =>
+              square &&
+              square.type === "k" &&
+              square.color === lobby.game!.turn()
+          );
+          return squareIndex >= 0
+            ? `${String.fromCharCode(squareIndex + 97)}${8 - index}`
+            : acc;
+        }, "");
+        kingSquare = {
+          [kingPos]: {
+            background:
+              "radial-gradient(red, rgba(255,0,0,.4), transparent 70%)",
+            borderRadius: "50%",
+          },
+        };
       }
-    });
-    return () => {
-      socket.removeAllListeners();
-    };
-  }, [game]);
+      updateCustomSquares({
+        lastMove: {
+          [result.from]: { background: "rgba(255, 255, 0, 0.4)" },
+          [result.to]: { background: "rgba(255, 255, 0, 0.4)" },
+        },
+        options: {},
+        check: kingSquare,
+      });
+      return true;
+    } catch (err) {
+      updateCustomSquares({
+        options: {},
+      });
+      return false;
+    }
+  }
 
-  function onDrop(sourceSquare: string, targetSquare: string) {
-    const tempGame = new Chess();
-    tempGame.loadPgn(game.pgn());
-    const valid = tempGame.moves();
-    if (!valid.includes(targetSquare) || !user) return false;
-    const turn = tempGame.turn();
-    const move = tempGame.move({
+  function onDrop(sourceSquare: Square, targetSquare: Square) {
+    if (
+      !user ||
+      lobby.side === "s" ||
+      navFen ||
+      lobby.end_reason ||
+      !lobby.black_connected ||
+      !lobby.white_connected
+    )
+      return false;
+
+    const moveDetails = {
       from: sourceSquare,
       to: targetSquare,
       promotion: "q",
-    });
+    };
+
+    const turn = lobby.game!.turn();
+    if (lobby.side != turn) return false;
+
+    const move = makeMove(moveDetails);
     if (!move) return false;
-    socket.emit("move", turn, move, id, user.id);
-    updateGame(tempGame);
+    socket.emit("move", turn, moveDetails, id, user.id);
     return true;
   }
 
+  function getNavMoveSquares() {
+    if (navIndex === null) return;
+    const history = lobby.game!.history({ verbose: true });
+
+    if (!history.length) return;
+
+    return {
+      [history[navIndex].from]: { background: "rgba(255, 255, 0, 0.4)" },
+      [history[navIndex].to]: { background: "rgba(255, 255, 0, 0.4)" },
+    };
+  }
+
+  function getMoveOptions(square: Square) {
+    const moves = lobby.game!.moves({
+      square,
+      verbose: true,
+    }) as Move[];
+    if (moves.length === 0) {
+      return;
+    }
+
+    const newSquares: {
+      [square: string]: { background: string; borderRadius?: string };
+    } = {};
+    moves.map((move) => {
+      newSquares[move.to] = {
+        background:
+          lobby.game!.get(move.to as Square) &&
+          lobby.game!.get(move.to as Square)?.color !==
+            lobby.game!.get(square)?.color
+            ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
+            : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
+        borderRadius: "50%",
+      };
+      return move;
+    });
+    newSquares[square] = {
+      background: "rgba(255, 255, 0, 0.4)",
+    };
+    updateCustomSquares({ options: newSquares });
+  }
+
+  function onPieceDragBegin(_: string, sourceSquare: Square) {
+    if (lobby.side !== lobby.game!.turn() || navFen || lobby.end_reason) return;
+
+    getMoveOptions(sourceSquare);
+  }
+
+  function onPieceDragEnd() {
+    updateCustomSquares({ options: {} });
+  }
+
+  if (lobby.side === "s") return <div>loading...</div>;
+
   return (
     <div className="w-[560px]">
-      <Chessboard position={game.fen()} onPieceDrop={onDrop} />
+      <Chessboard
+        customDarkSquareStyle={{ backgroundColor: "#4b7399" }}
+        customLightSquareStyle={{ backgroundColor: "#faf9f6" }}
+        position={navFen || lobby.game!.fen()}
+        boardOrientation={lobby.side === "b" ? "black" : "white"}
+        onPieceDragBegin={onPieceDragBegin}
+        onPieceDragEnd={onPieceDragEnd}
+        onPieceDrop={onDrop}
+        arePremovesAllowed={!navFen}
+        customSquareStyles={{
+          ...(navIndex === null ? customSquares.lastMove : getNavMoveSquares()),
+          ...(navIndex === null ? customSquares.check : {}),
+          ...customSquares.rightClicked,
+          ...(navIndex === null ? customSquares.options : {}),
+        }}
+      />
     </div>
   );
 };

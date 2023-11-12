@@ -1,30 +1,12 @@
-"use client";
-
 import { Button } from "../ui/button";
 import { UserPlus2 } from "lucide-react";
 import Link from "next/link";
-import useUserStore from "@/store/user-store";
-import { useEffect, useState } from "react";
-import { Skeleton } from "../ui/skeleton";
 import { CreateLobbyDialog } from "./CreateGameDialog";
-import StartGameButton from "./StartGameButton";
 import { SignInAlert } from "./SignInAlert";
+import { useServerSession } from "@/hooks/useServerSession";
 
-const HeroButtons = () => {
-  const user = useUserStore.use.user();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted)
-    return (
-      <div className="flex flex-col gap-3 md:flex-row pt-5 lg:pt-2">
-        <StartGameButton />
-        <Skeleton className="h-9 w-[250px] lg:w-[200px]" />
-      </div>
-    );
+const HeroButtons = async () => {
+  const user = await useServerSession();
 
   return (
     <div className="flex flex-col gap-3 md:flex-row pt-5 lg:pt-2">

@@ -34,7 +34,7 @@ const PasswordForm = () => {
   });
   const onSubmit: SubmitHandler<UpdateUserPasswordSchema> = async (payload) => {
     try {
-      const { data } = await axios.post(
+      const { data } = await axios.patch(
         `${env.NEXT_PUBLIC_SERVER_URL}/api/users/update-user/password`,
         payload,
         { withCredentials: true }
@@ -84,7 +84,7 @@ const PasswordForm = () => {
             </p>
           </div>
           <div className="relative grid gap-2">
-            <Label htmlFor="new_password">New Password</Label>
+            <Label htmlFor="new_password">New password</Label>
             <Input
               id="new_password"
               className="w-[400px]"

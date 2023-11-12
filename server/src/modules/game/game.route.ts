@@ -1,9 +1,6 @@
 import { FastifyInstance } from "fastify";
-import {
-  createGameHandler,
-  deleteGameHandler,
-  getGamesHandler,
-} from "./game.controller";
+import { deleteGameHandler, getGamesHandler } from "./game.controller";
+import { createGameHandler } from "./game.controller";
 import { $ref } from "./game.schema";
 import { $ref as sharedRef } from "../shared/response.schema";
 

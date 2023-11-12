@@ -79,7 +79,6 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
               autoCorrect="off"
               disabled={isSubmitting}
               {...register("username")}
-              className="dark:focus-visible:ring-amber-500"
             />
             <p className="text-red-500 h-4 text-sm">
               {errors.username && (
@@ -100,7 +99,6 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
               autoCorrect="off"
               disabled={isSubmitting}
               {...register("password")}
-              className="dark:focus-visible:ring-amber-500"
             />
             <p className="text-red-500 h-4 text-sm">
               {errors.password && (
@@ -126,7 +124,12 @@ export function SigninForm({ className, ...props }: SigninFormProps) {
           </span>
         </div>
       </div>
-      <Button variant="outline" type="button" disabled={isSubmitting}>
+      <Button
+        variant="outline"
+        type="button"
+        disabled={isSubmitting}
+        onClick={() => push(`${env.NEXT_PUBLIC_SERVER_URL}/api/auth/google`)}
+      >
         <Icons.google className="mr-2 h-4 w-4" /> Google
       </Button>
     </div>

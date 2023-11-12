@@ -13,7 +13,7 @@ const userCore = {
       invalid_type_error: "Username is invalid",
     })
     .min(5, { message: "Username must be atleast 5 characters" })
-    .max(10, { message: "Username must not be above 10 characters" }),
+    .max(25, { message: "Username must not be above 25 characters" }),
 };
 
 export const createUserSchema = z
@@ -44,7 +44,7 @@ export const signinUserSchema = z.object({
       invalid_type_error: "Username is invalid",
     })
     .min(5, { message: "Username must be atleast 5 characters" })
-    .max(10, { message: "Username must not be above 10 characters" }),
+    .max(25, { message: "Username must not be above 25 characters" }),
   password: z
     .string({
       required_error: "Password is required",
@@ -60,7 +60,7 @@ export const updateUserUsernameSchema = z.object({
       invalid_type_error: "Username is invalid",
     })
     .min(5, { message: "Username must be atleast 5 characters" })
-    .max(10, { message: "Username must not be above 10 characters" }),
+    .max(25, { message: "Username must not be above 25 characters" }),
 });
 
 export const updateUserEmailSchema = z.object({

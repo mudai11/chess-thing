@@ -11,7 +11,7 @@ const Navbar = async () => {
   const user = await useServerSession();
 
   return (
-    <header className="flex flex-row justify-around items-center pt-4">
+    <header className="flex flex-row justify-around items-center pt-3">
       <Logo />
       <div className="flex flex-row gap-2">
         <ThemeToggle />

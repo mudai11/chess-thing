@@ -2,15 +2,19 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import jwt from "@fastify/jwt";
 import cookie from "@fastify/cookie";
 import cors from "@fastify/cors";
+import oauth from "@fastify/oauth2";
 import io from "fastify-socket.io";
 
 export async function injectPlugins(
   app: FastifyInstance,
-  cors_origin: string,
-  secret_key: string
+  origin: string,
+  secret_key: string,
+  google_client_id: string,
+  google_client_secret: string,
+  google_oauth_redirect_url: string
 ) {
   await app.register(cors, {
-    origin: cors_origin,
+    origin: origin,
     credentials: true,
   });
 
@@ -29,9 +33,9 @@ export async function injectPlugins(
         await request.jwtVerify();
       } catch (e: any) {
         if (e.statusCode === 401) {
-          return reply.status(401).send({ error: "Unauthorized" });
+          return reply.status(401).send({ error: "Unauthorized." });
         }
-        return reply.status(500).send({ error: "Could not verify token" });
+        return reply.status(500).send({ error: "Could not verify token." });
       }
     }
   );
@@ -40,9 +44,23 @@ export async function injectPlugins(
     secret: secret_key,
   });
 
+  await app.register(oauth, {
+    name: "googleOAuth2",
+    scope: ["email", "profile"],
+    credentials: {
+      client: {
+        id: google_client_id,
+        secret: google_client_secret,
+      },
+      auth: oauth.GOOGLE_CONFIGURATION,
+    },
+    startRedirectPath: "/api/auth/google",
+    callbackUri: google_oauth_redirect_url,
+  });
+
   await app.register(io, {
     cors: {
-      origin: cors_origin,
+      origin: origin,
     },
   });
 }

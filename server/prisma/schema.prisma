@@ -10,10 +10,11 @@ datasource db {
 model User {
   id String @id @default(cuid())
   email String   @unique
-  emailVerified DateTime?
+  verified_email Boolean @default(false)
   username String @unique
   image String?
-  password String
+  password String?
+  with_provider Boolean @default(false)
   games_as_white Game[] @relation("white")
   games_as_black Game[] @relation("black")
   wins Int @default(0)

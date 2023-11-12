@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -5,6 +7,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogClose,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -16,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import StartGameButton from "./StartGameButton";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/store/user-store";
@@ -25,14 +28,16 @@ import axios, { AxiosError } from "axios";
 import { Icons } from "../Icons";
 import { toast } from "@/hooks/useToast";
 
+type TSide = "white" | "black";
+
 export function CreateLobbyDialog() {
-  const [side, setSide] = useState<string>("White");
+  const [side, setSide] = useState<TSide>("white");
   const [loading, setLoading] = useState<boolean>(false);
   const user = useUserStore.use.user();
   const { push } = useRouter();
-  const handleSideChange = useCallback((value: string) => {
+  const handleSideChange = (value: TSide) => {
     setSide(value);
-  }, []);
+  };
 
   const handleCreateLobby = async () => {
     try {
@@ -41,7 +46,7 @@ export function CreateLobbyDialog() {
         `${env.NEXT_PUBLIC_SERVER_URL}/api/games/create-game`,
         {
           id: user?.id!,
-          side: side.toLocaleLowerCase(),
+          side: side,
         },
         {
           withCredentials: true,
@@ -91,8 +96,8 @@ export function CreateLobbyDialog() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="White">White</SelectItem>
-                <SelectItem value="Black">Black</SelectItem>
+                <SelectItem value="white">White</SelectItem>
+                <SelectItem value="black">Black</SelectItem>
               </SelectContent>
             </Select>
           </div>

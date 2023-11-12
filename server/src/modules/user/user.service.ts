@@ -74,26 +74,6 @@ async function updateUserPassword(id: string, password: string) {
   });
 }
 
-async function getAuthenticatedUser(id: string) {
-  return await db.user.findUnique({
-    where: {
-      id,
-    },
-    select: {
-      id: true,
-      email: true,
-      emailVerified: true,
-      username: true,
-      image: true,
-      games_as_black: true,
-      games_as_white: true,
-      wins: true,
-      losses: true,
-      draws: true,
-    },
-  });
-}
-
 async function deleteUser(id: string) {
   return await db.user.delete({
     where: {
@@ -110,6 +90,5 @@ export {
   updateUserEmail,
   updateUserUsername,
   updateUserPassword,
-  getAuthenticatedUser,
   deleteUser,
 };

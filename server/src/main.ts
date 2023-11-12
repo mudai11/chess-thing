@@ -1,15 +1,18 @@
 import Fastify, { FastifyInstance } from "fastify";
 import { Server } from "socket.io";
+import { OAuth2Namespace } from "@fastify/oauth2";
 import { injectPlugins } from "./utils/plugins";
 import { injectRoutes } from "./utils/routes";
 import { injectSchemas } from "./utils/schemas";
 import { injectSocket } from "./socket/socket";
 import Redis from "ioredis";
 import { env } from "../env";
+import { GoogleUserResult } from "./types";
+import { randomUsername } from "./utils/randomusername";
 
 export const app: FastifyInstance = Fastify();
 export const publisher = new Redis(env.REDIS_URL);
-const subscriber = new Redis(env.REDIS_URL);
+export const subscriber = new Redis(env.REDIS_URL);
 const port = parseInt(env.PORT, 10);
 const host = env.HOST;
 
@@ -25,8 +28,21 @@ declare module "fastify" {
   }
 }
 
+declare module "fastify" {
+  interface FastifyInstance {
+    googleOAuth2: OAuth2Namespace;
+  }
+}
+
 async function build() {
-  await injectPlugins(app, env.CORS_ORIGIN, env.SECRET_KEY);
+  await injectPlugins(
+    app,
+    env.ORIGIN,
+    env.SECRET_KEY,
+    env.GOOGLE_CLIENT_ID,
+    env.GOOGLE_CLIENT_SECRET,
+    env.GOOGLE_OAUTH_REDIRECT_URL
+  );
 
   await injectRoutes(app);
 

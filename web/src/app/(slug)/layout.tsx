@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Chess Thing",
-  description: "A simple chess game application",
+  description: "A modern chess game application",
 };
 
 export default async function RootLayout({
@@ -23,7 +23,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextTopLoader
-            color="#f59e0b"
+            color="#4b7399"
             height={4}
             crawlSpeed={200}
             easing="ease"
