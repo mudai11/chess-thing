@@ -29,6 +29,9 @@ dependencies:
   bcrypt:
     specifier: ^5.1.1
     version: 5.1.1
+  chess.js:
+    specifier: 1.0.0-beta.6
+    version: 1.0.0-beta.6
   fastify:
     specifier: ^4.24.3
     version: 4.24.3
@@ -580,6 +583,10 @@ packages:
       sentence-case: 3.0.4
       snake-case: 3.0.4
       tslib: 2.6.2
+    dev: false
+
+  /chess.js@1.0.0-beta.6:
+    resolution: {integrity: sha512-sqBfX1VL3csSyqVM5ogbKA+aRlZyWDh276ruWXphwI0lDUMs7iYjZs29BOi49f7mXeunJE7cdfnIZhihsyLnsA==}
     dev: false
 
   /chokidar@3.5.3:

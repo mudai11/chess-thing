@@ -45,11 +45,6 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, user]);
 
-  useEffect(() => {
-    if (lobby.game.isGameOver()) {
-    }
-  }, [lobby.game]);
-
   function makeMove(m: { from: string; to: string; promotion?: string }) {
     try {
       const result = lobby.game.move(m);

@@ -2,6 +2,7 @@ import { Game } from "@prisma/client";
 import { Socket } from "socket.io";
 import { publisher } from "../main";
 import { db } from "../utils/db";
+import { Chess } from "chess.js";
 
 type TCachedGame = Game & { players: number; host: string };
 
@@ -42,9 +43,55 @@ export async function move(
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
+  if (game.winner || game.end_reason) return;
+  const chess = new Chess();
+  if (game.pgn) {
+    chess.loadPgn(game.pgn);
+  }
+  const prev_turn = chess.turn();
   if (side === "w" && game.whiteId != user_id) return;
   if (side === "b" && game.blackId != user_id) return;
-  this.to(game_id).emit("sync-move", side, move);
+  const new_move = chess.move(move);
+  if (new_move) {
+    game.pgn = chess.pgn();
+    this.to(game_id).emit("sync-move", side, move);
+    if (chess.isGameOver()) {
+      let reason: Game["end_reason"];
+      let the_winner: string;
+      if (chess.isCheckmate() && prev_turn === "w") {
+        reason = "BLACK_CHECKMATED";
+        the_winner = game.whiteId!;
+      }
+      if (chess.isCheckmate() && prev_turn === "b") {
+        reason = "WHITE_CHECKMATED";
+        the_winner = game.blackId!;
+      }
+      if (
+        chess.isStalemate() ||
+        chess.isThreefoldRepetition() ||
+        chess.isInsufficientMaterial() ||
+        chess.isDraw()
+      )
+        reason = "DRAW";
+
+      const { host, players, winner, pgn, end_reason, ...rest } = game;
+
+      await db.game.update({
+        where: {
+          id: game_id,
+        },
+        data: {
+          ...rest,
+          winner: the_winner!,
+          end_reason: reason!,
+          pgn: chess.pgn(),
+        },
+      });
+      await publisher.del(game_id);
+    } else {
+      await publisher.set(game_id, JSON.stringify(game));
+    }
+  }
 }
 
 export async function leaveLobby(
@@ -55,6 +102,7 @@ export async function leaveLobby(
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
+  if (game.end_reason || game.end_reason) return;
   if (game.players === 1) {
     try {
       await db.game.delete({
