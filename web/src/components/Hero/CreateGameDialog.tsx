@@ -7,7 +7,6 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogClose,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
@@ -22,7 +21,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import StartGameButton from "./StartGameButton";
 import { useRouter } from "next/navigation";
-import useUserStore from "@/store/user-store";
+import { useUserStore } from "@/store/user-store";
 import { env } from "@/../env";
 import axios, { AxiosError } from "axios";
 import { Icons } from "../Icons";
@@ -33,7 +32,7 @@ type TSide = "white" | "black";
 export function CreateLobbyDialog() {
   const [side, setSide] = useState<TSide>("white");
   const [loading, setLoading] = useState<boolean>(false);
-  const user = useUserStore.use.user();
+  const user = useUserStore((state) => state.user);
   const { push } = useRouter();
   const handleSideChange = (value: TSide) => {
     setSide(value);

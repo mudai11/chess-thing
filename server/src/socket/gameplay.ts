@@ -15,21 +15,15 @@ export async function joinLobby(
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
   if (game.host === user_id) {
-    console.log(`user ${user_id} joined ${game_id} as host`);
     this.join(game_id);
     const side = game.blackId ? "b" : "w";
     this.nsp.to(game_id).emit("joined-lobby", side, user_id);
-    console.log(
-      `sending joined lobby event with details : user ${user_id}, side: ${side}, game ${game_id}`
-    );
     return;
   }
   if (game.players === 2) {
-    console.log(`user ${user_id} joined ${game_id} while game is on`);
     this.join(game_id);
     return;
   }
-  console.log(`user ${user_id} joined ${game_id} as second player`);
   this.join(game_id);
   const side = game.blackId ? "w" : "b";
   this.nsp.to(game_id).emit("joined-lobby", side, user_id);
@@ -45,9 +39,6 @@ export async function move(
   game_id: string,
   user_id: string
 ) {
-  console.log(
-    `user ${user_id} is trying to move from ${move.from} to ${move.to}`
-  );
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
@@ -61,7 +52,6 @@ export async function leaveLobby(
   game_id: string,
   user_id: string
 ) {
-  console.log(`user ${user_id} trying to leave ${game_id}`);
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
@@ -141,7 +131,6 @@ export async function gameOver(
       },
     });
     await publisher.del(game_id);
-    this.to(game_id).emit("sync-game-over", end_reason);
   } catch (e) {
     this.to(game_id).emit("oops", e);
   }

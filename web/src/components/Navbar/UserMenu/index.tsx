@@ -10,7 +10,7 @@ import {
 import { FC } from "react";
 import UserAvatar from "./UserAvatar";
 import Link from "next/link";
-import userStore from "@/store/user-store";
+import { useUserStore } from "@/store/user-store";
 import { useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -23,8 +23,8 @@ interface UserMenuProps {
 }
 
 const UserMenu: FC<UserMenuProps> = ({ user }) => {
-  const clearUser = userStore.use.clearUser();
-  const setUser = userStore.use.setUser();
+  const clearUser = useUserStore((state) => state.clearUser);
+  const setUser = useUserStore((state) => state.setUser);
   const { push, refresh } = useRouter();
 
   useEffect(() => {

@@ -1,11 +1,11 @@
 "use client";
 
-import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
 import { useState, useEffect, FC, useReducer } from "react";
-import useUserStore from "@/store/user-store";
+import { useUserStore } from "@/store/user-store";
+import { useLobbyStore } from "@/store/lobby-store";
 import { SocketService } from "@/utils/socket";
-import { lobbyReducer, squareReducer } from "./reducers";
+import { squareReducer } from "./reducers";
 import type { Move, Square } from "chess.js";
 import { injectSocket } from "./socket";
 
@@ -17,17 +17,11 @@ interface ChessboardComponentProps {
 }
 
 const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
-  const user = useUserStore.use.user();
-  const [lobby, updateLobby] = useReducer(lobbyReducer, {
-    png: "",
-    black: null,
-    white: null,
-    black_connected: null,
-    white_connected: null,
-    game: new Chess(),
-    side: "s",
-    end_reason: null,
-  });
+  const user = useUserStore((state) => state.user);
+  const lobby = useLobbyStore((state) => state.lobby);
+  const updateLobby = useLobbyStore((state) => state.updateLobby);
+  // const start = useLobbyStore((state) => state.start);
+  // const reset = useLobbyStore((state) => state.reset);
   const [customSquares, updateCustomSquares] = useReducer(squareReducer, {
     options: {},
     lastMove: {},
@@ -46,14 +40,20 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
       if (user) socket.emit("leave-lobby", id, user.id);
       socket.removeAllListeners();
       socket.disconnect();
+      updateLobby({ type: "clearLobby", payload: null });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, user]);
 
+  useEffect(() => {
+    if (lobby.game.isGameOver()) {
+    }
+  }, [lobby.game]);
+
   function makeMove(m: { from: string; to: string; promotion?: string }) {
     try {
-      const result = lobby.game!.move(m);
-      if (!result) return new Error("Invalid move");
+      const result = lobby.game.move(m);
+      if (!result) return;
 
       setNavFen(null);
       setNavIndex(null);
@@ -100,15 +100,7 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
   }
 
   function onDrop(sourceSquare: Square, targetSquare: Square) {
-    if (
-      !user ||
-      lobby.side === "s" ||
-      navFen ||
-      lobby.end_reason ||
-      !lobby.black_connected ||
-      !lobby.white_connected
-    )
-      return false;
+    if (!user || lobby.side === "s" || navFen || lobby.end_reason) return false;
 
     const moveDetails = {
       from: sourceSquare,
@@ -121,7 +113,7 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
 
     const move = makeMove(moveDetails);
     if (!move) return false;
-    socket.emit("move", turn, moveDetails, id, user.id);
+    socket.emit("move", turn, moveDetails, id, user?.id);
     return true;
   }
 

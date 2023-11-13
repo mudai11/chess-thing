@@ -1,70 +1,160 @@
-import type { Chess } from "chess.js";
-import { createSelectors } from "./createSelectors";
+import type { Chess as TChess } from "chess.js";
+import { Chess } from "chess.js";
 import { create } from "zustand";
 import { Game } from "../../../server/src/types";
 
-type lobbyStoreState = {
+type Lobby = {
   png: string | null;
   black: string | null;
   white: string | null;
-  black_connected: boolean | null;
-  white_connected: boolean | null;
-  players_number: number | null;
-  actualGame: Chess | null;
-  side: "b" | "w" | "s";
-  end_reasons: Game["end_reason"] | null;
+  black_connected: boolean;
+  white_connected: boolean;
+  game: TChess;
+  side: string;
+  end_reason: Game["end_reason"] | null;
+};
+
+type LobbyStoreState = {
+  lobby: Lobby;
+  count: number;
+  abondoned: boolean;
+};
+
+export type Action =
+  | {
+      type: "setPng";
+      payload: LobbyStoreState["lobby"]["png"];
+    }
+  | {
+      type: "setBlack";
+      payload: LobbyStoreState["lobby"]["black"];
+    }
+  | {
+      type: "setWhite";
+      payload: LobbyStoreState["lobby"]["white"];
+    }
+  | {
+      type: "setBlackConnected";
+      payload: LobbyStoreState["lobby"]["black_connected"];
+    }
+  | {
+      type: "setWhiteConnected";
+      payload: LobbyStoreState["lobby"]["white_connected"];
+    }
+  | {
+      type: "setGame";
+      payload: Chess;
+    }
+  | {
+      type: "setSide";
+      payload: LobbyStoreState["lobby"]["side"];
+    }
+  | {
+      type: "setEndReason";
+      payload: LobbyStoreState["lobby"]["end_reason"];
+    }
+  | {
+      type: "clearLobby";
+      payload: null;
+    };
+
+const reducer = (state: LobbyStoreState, action: Action) => {
+  switch (action.type) {
+    case "setPng":
+      return { lobby: { ...state.lobby, png: action.payload } };
+    case "setBlack":
+      return { lobby: { ...state.lobby, black: action.payload } };
+    case "setWhite":
+      return { lobby: { ...state.lobby, white: action.payload } };
+    case "setBlackConnected":
+      return { lobby: { ...state.lobby, black_connected: action.payload } };
+    case "setWhiteConnected":
+      return { lobby: { ...state.lobby, white_connected: action.payload } };
+    case "setGame":
+      return { lobby: { ...state.lobby, game: action.payload } };
+    case "setSide":
+      return { lobby: { ...state.lobby, side: action.payload } };
+    case "setEndReason":
+      return { lobby: { ...state.lobby, end_reason: action.payload } };
+    case "clearLobby":
+      return {
+        lobby: {
+          png: null,
+          black: null,
+          white: null,
+          black_connected: false,
+          white_connected: false,
+          game: new Chess(),
+          side: "s",
+          count: 60,
+          abondoned: false,
+          end_reason: null,
+        },
+      };
+  }
 };
 
 type lobbyStoreAction = {
-  setPng: (png: lobbyStoreState["png"]) => void;
-  setBlack: (black: lobbyStoreState["black"]) => void;
-  setWhite: (white: lobbyStoreState["white"]) => void;
-  setBlackConnected: (
-    black_connected: lobbyStoreState["black_connected"]
-  ) => void;
-  setWhiteConnected: (
-    white_connected: lobbyStoreState["white_connected"]
-  ) => void;
-  setPlayersNumber: (players_number: lobbyStoreState["players_number"]) => void;
-  setActualGame: (actualGame: lobbyStoreState["actualGame"]) => void;
-  clearLobby: () => void;
+  updateLobby: (action: Action) => void;
+  start: () => void;
+  reset: () => void;
 };
 
-const lobbyStore = create<lobbyStoreState & lobbyStoreAction>()((set) => ({
-  png: null,
-  black: null,
-  white: null,
-  black_connected: null,
-  white_connected: null,
-  players_number: null,
-  actualGame: null,
-  side: "s",
-  end_reasons: null,
-  setPng: (png) => set(() => ({ png: png })),
-  setBlack: (black) => set(() => ({ black: black })),
-  setWhite: (white) => set(() => ({ white: white })),
-  setBlackConnected: (black_connected) =>
-    set(() => ({ black_connected: black_connected })),
-  setWhiteConnected: (white_connected) =>
-    set(() => ({ white_connected: white_connected })),
-  setPlayersNumber: (players_number) =>
-    set(() => ({ players_number: players_number })),
-  setActualGame: (actualGame) => set(() => ({ actualGame: actualGame })),
-  clearLobby: () =>
-    set(
-      () => ({
-        png: null,
-        black: null,
-        white: null,
-        black_connected: null,
-        white_connected: null,
-        players_number: null,
-        actualGame: null,
-        side: "s",
-        end_reasons: null,
-      }),
-      true
-    ),
+let intervalId: any = null;
+
+const clearCurrentInterval = () => {
+  if (intervalId !== null) {
+    clearInterval(intervalId);
+    intervalId = null;
+  }
+};
+
+const useLobbyStore = create<LobbyStoreState & lobbyStoreAction>()((set) => ({
+  lobby: {
+    png: null,
+    black: null,
+    white: null,
+    black_connected: false,
+    white_connected: false,
+    game: new Chess(),
+    side: "s",
+    end_reason: null,
+  },
+  count: 60,
+  abondoned: false,
+  updateLobby: (args) => set((state) => reducer(state, args)),
+  start: () => {
+    if (intervalId === null) {
+      let count = 60;
+      set({ abondoned: true });
+
+      intervalId = setInterval(() => {
+        count = count - 1;
+        set((state) => ({ count: state.count - 1 }));
+        if (count === 0) {
+          clearCurrentInterval();
+          set({
+            lobby: {
+              png: null,
+              black: null,
+              white: null,
+              black_connected: false,
+              white_connected: false,
+              game: new Chess(),
+              side: "s",
+              end_reason: null,
+            },
+            count: 0,
+            abondoned: false,
+          });
+        }
+      }, 1000);
+    }
+  },
+  reset: () => {
+    clearCurrentInterval();
+    set({ count: 0, abondoned: false });
+  },
 }));
 
-export default createSelectors(lobbyStore);
+export { useLobbyStore };
