@@ -12,7 +12,6 @@ export async function joinLobby(
   username: string
 ) {
   try {
-    console.log(`${username} trying to join ${game_id}`);
     const active_game = await publisher.get(game_id);
     if (!active_game) return;
     const game: TCachedGame = JSON.parse(active_game);
@@ -110,7 +109,7 @@ export async function move(
           });
           await db.user.update({
             where: {
-              username: game.white_player!,
+              username: game.black_player!,
             },
             data: {
               draws: {
@@ -161,7 +160,7 @@ export async function leaveLobby(
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
-  if (game.end_reason || game.end_reason) return;
+  if (game.end_reason || game.winner) return;
   if (game.players === 1) {
     try {
       await db.game.delete({
