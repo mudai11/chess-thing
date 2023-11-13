@@ -25,10 +25,10 @@ model User {
 
 model Game {
   id String @id @default(cuid())
-  whiteId String?
-  blackId String?
-  white User? @relation("white", fields: [whiteId], references: [id])
-  black User? @relation("black", fields: [blackId], references: [id])
+  white_player String?
+  black_player String?
+  white User? @relation("white", fields: [white_player], references: [username])
+  black User? @relation("black", fields: [black_player], references: [username])
   winner String?
   end_reason EndReason?
   pgn String @default("")

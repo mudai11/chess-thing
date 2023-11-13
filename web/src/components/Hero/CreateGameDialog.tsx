@@ -44,7 +44,7 @@ export function CreateLobbyDialog() {
       const { data } = await axios.post(
         `${env.NEXT_PUBLIC_SERVER_URL}/api/games/create-game`,
         {
-          id: user?.id!,
+          username: user?.username!,
           side: side,
         },
         {

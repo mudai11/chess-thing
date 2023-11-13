@@ -1,16 +1,16 @@
 import { db } from "../../utils/db";
 
-async function createGame(id: string, side: string) {
+async function createGame(username: string, side: string) {
   if (side === "black") {
     return await db.game.create({
       data: {
-        blackId: id,
+        black_player: username,
       },
     });
   } else {
     return await db.game.create({
       data: {
-        whiteId: id,
+        white_player: username,
       },
     });
   }

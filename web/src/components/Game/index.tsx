@@ -34,10 +34,10 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
   useEffect(() => {
     if (!user) return;
     socket.connect();
-    injectSocket(socket, id, user.id, updateLobby, makeMove);
+    injectSocket(socket, id, user.username, updateLobby, makeMove);
 
     return () => {
-      if (user) socket.emit("leave-lobby", id, user.id);
+      if (user) socket.emit("leave-lobby", id, user.username);
       socket.removeAllListeners();
       socket.disconnect();
       updateLobby({ type: "clearLobby", payload: null });
@@ -108,7 +108,7 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
 
     const move = makeMove(moveDetails);
     if (!move) return false;
-    socket.emit("move", turn, moveDetails, id, user.id);
+    socket.emit("move", turn, moveDetails, id, user.username);
     return true;
   }
 

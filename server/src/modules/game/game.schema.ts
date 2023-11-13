@@ -2,7 +2,7 @@ import z from "zod";
 import { buildJsonSchemas } from "fastify-zod";
 
 const createGameSchema = z.object({
-  id: z.string(),
+  username: z.string(),
   side: z.enum(["black", "white"]),
 });
 

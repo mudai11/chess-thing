@@ -9,28 +9,34 @@ type TCachedGame = Game & { players: number; host: string };
 export async function joinLobby(
   this: Socket,
   game_id: string,
-  user_id: string
+  username: string
 ) {
-  console.log(`user ${user_id} trying to join ${game_id}`);
-  const active_game = await publisher.get(game_id);
-  if (!active_game) return;
-  const game: TCachedGame = JSON.parse(active_game);
-  if (game.host === user_id) {
+  try {
+    console.log(`${username} trying to join ${game_id}`);
+    const active_game = await publisher.get(game_id);
+    if (!active_game) return;
+    const game: TCachedGame = JSON.parse(active_game);
+    if (game.host === username) {
+      this.join(game_id);
+      const side = game.black_player ? "b" : "w";
+      this.nsp.to(game_id).emit("joined-lobby", side, username);
+      return;
+    }
+    if (game.players === 2) {
+      this.join(game_id);
+      return;
+    }
     this.join(game_id);
-    const side = game.blackId ? "b" : "w";
-    this.nsp.to(game_id).emit("joined-lobby", side, user_id);
-    return;
+    const side = game.black_player ? "w" : "b";
+    this.nsp.to(game_id).emit("joined-lobby", side, username);
+    game.players = 2;
+    game.white_player
+      ? (game.black_player = username)
+      : (game.white_player = username);
+    await publisher.set(game_id, JSON.stringify(game));
+  } catch (e) {
+    console.log(e);
   }
-  if (game.players === 2) {
-    this.join(game_id);
-    return;
-  }
-  this.join(game_id);
-  const side = game.blackId ? "w" : "b";
-  this.nsp.to(game_id).emit("joined-lobby", side, user_id);
-  game.players = 2;
-  game.whiteId ? (game.blackId = user_id) : (game.whiteId = user_id);
-  await publisher.set(game_id, JSON.stringify(game));
 }
 
 export async function move(
@@ -38,68 +44,119 @@ export async function move(
   side: string,
   move: { to: string; from: string; promotion: string },
   game_id: string,
-  user_id: string
+  username: string
 ) {
-  const active_game = await publisher.get(game_id);
-  if (!active_game) return;
-  const game: TCachedGame = JSON.parse(active_game);
-  if (game.winner || game.end_reason) return;
-  const chess = new Chess();
-  if (game.pgn) {
-    chess.loadPgn(game.pgn);
-  }
-  const prev_turn = chess.turn();
-  if (side === "w" && game.whiteId != user_id) return;
-  if (side === "b" && game.blackId != user_id) return;
-  const new_move = chess.move(move);
-  if (new_move) {
-    game.pgn = chess.pgn();
-    this.to(game_id).emit("sync-move", side, move);
-    if (chess.isGameOver()) {
-      let reason: Game["end_reason"];
-      let the_winner: string;
-      if (chess.isCheckmate() && prev_turn === "w") {
-        reason = "BLACK_CHECKMATED";
-        the_winner = game.whiteId!;
-      }
-      if (chess.isCheckmate() && prev_turn === "b") {
-        reason = "WHITE_CHECKMATED";
-        the_winner = game.blackId!;
-      }
-      if (
-        chess.isStalemate() ||
-        chess.isThreefoldRepetition() ||
-        chess.isInsufficientMaterial() ||
-        chess.isDraw()
-      )
-        reason = "DRAW";
-
-      const { host, players, winner, pgn, end_reason, ...rest } = game;
-
-      await db.game.update({
-        where: {
-          id: game_id,
-        },
-        data: {
-          ...rest,
-          winner: the_winner!,
-          end_reason: reason!,
-          pgn: chess.pgn(),
-        },
-      });
-      await publisher.del(game_id);
-    } else {
-      await publisher.set(game_id, JSON.stringify(game));
+  try {
+    const active_game = await publisher.get(game_id);
+    if (!active_game) return;
+    const game: TCachedGame = JSON.parse(active_game);
+    if (game.winner || game.end_reason) return;
+    const chess = new Chess();
+    if (game.pgn) {
+      chess.loadPgn(game.pgn);
     }
-  } else {
-    return;
+    const prev_turn = chess.turn();
+    if (side === "w" && game.white_player != username) return;
+    if (side === "b" && game.black_player != username) return;
+    const new_move = chess.move(move);
+    if (new_move) {
+      game.pgn = chess.pgn();
+      this.to(game_id).emit("sync-move", side, move);
+      if (chess.isGameOver()) {
+        let reason: Game["end_reason"] = null;
+        let the_winner: string | null = null;
+        let the_loser: string | null = null;
+        if (chess.isCheckmate() && prev_turn === "w") {
+          reason = "BLACK_CHECKMATED";
+          the_winner = game.white_player!;
+          the_loser = game.black_player!;
+        }
+        if (chess.isCheckmate() && prev_turn === "b") {
+          reason = "WHITE_CHECKMATED";
+          the_winner = game.black_player!;
+          the_loser = game.white_player!;
+        }
+        if (
+          chess.isStalemate() ||
+          chess.isThreefoldRepetition() ||
+          chess.isInsufficientMaterial() ||
+          chess.isDraw()
+        )
+          reason = "DRAW";
+
+        const { host, players, winner, pgn, end_reason, ...rest } = game;
+
+        await db.game.update({
+          where: {
+            id: game_id,
+          },
+          data: {
+            ...rest,
+            winner: the_winner,
+            end_reason: reason,
+            pgn: chess.pgn(),
+          },
+        });
+        if (reason === "DRAW") {
+          await db.user.update({
+            where: {
+              username: game.white_player!,
+            },
+            data: {
+              draws: {
+                increment: 1,
+              },
+            },
+          });
+          await db.user.update({
+            where: {
+              username: game.white_player!,
+            },
+            data: {
+              draws: {
+                increment: 1,
+              },
+            },
+          });
+        } else {
+          await db.user.update({
+            where: {
+              username: the_winner!,
+            },
+            data: {
+              wins: {
+                increment: 1,
+              },
+            },
+          });
+          await db.user.update({
+            where: {
+              username: the_loser!,
+            },
+            data: {
+              losses: {
+                increment: 1,
+              },
+            },
+          });
+        }
+
+        await publisher.del(game_id);
+      } else {
+        await publisher.set(game_id, JSON.stringify(game));
+      }
+    } else {
+      return;
+    }
+  } catch (e) {
+    console.log(e);
   }
 }
 
 export async function leaveLobby(
   this: Socket,
   game_id: string,
-  user_id: string
+  username: string
 ) {
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
@@ -114,15 +171,15 @@ export async function leaveLobby(
       });
       await publisher.del(game_id);
     } catch (e) {
-      this.to(user_id).emit("oops", e);
+      console.log(e);
     }
     return;
   }
-  if (game.whiteId === user_id) {
-    game.winner = game.blackId;
+  if (game.white_player === username) {
+    game.winner = game.black_player;
     game.end_reason = "WHITE_DISCONNECTED";
   } else {
-    game.winner = game.whiteId;
+    game.winner = game.white_player;
     game.end_reason = "BLACK_DISCONNECTED";
   }
   const { host, players, id, ...rest } = game;
@@ -137,66 +194,20 @@ export async function leaveLobby(
     });
     await publisher.del(game_id);
   } catch (e) {
-    this.to(user_id).emit("oops", e);
-  }
-}
-
-export async function gameOver(
-  this: Socket,
-  game_id: string,
-  end_reason: Game["end_reason"]
-) {
-  const active_game = await publisher.get(game_id);
-  if (!active_game) return;
-  const game: TCachedGame = JSON.parse(active_game);
-  switch (end_reason) {
-    case "DRAW":
-      game.end_reason = "DRAW";
-      break;
-    case "BLACK_CHECKMATED":
-      game.end_reason = "BLACK_CHECKMATED";
-      game.winner = game.whiteId;
-      break;
-    case "WHITE_CHECKMATED":
-      game.end_reason = "WHITE_CHECKMATED";
-      game.winner = game.whiteId;
-      break;
-    case "BLACK_RESIGNED":
-      game.end_reason = "BLACK_RESIGNED";
-      game.winner = game.whiteId;
-      break;
-    case "WHITE_RESIGNED":
-      game.end_reason = "WHITE_RESIGNED";
-      game.winner = game.blackId;
-      break;
-  }
-  const { host, players, id, ...rest } = game;
-  try {
-    await db.game.update({
-      where: {
-        id: game_id,
-      },
-      data: {
-        ...rest,
-      },
-    });
-    await publisher.del(game_id);
-  } catch (e) {
-    this.to(game_id).emit("oops", e);
+    console.log(e);
   }
 }
 
 export async function message(
   this: Socket,
   game_id: string,
-  user_id: string,
   username: string,
   message: string
 ) {
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
-  if (user_id != game.whiteId && user_id != game.blackId) return;
+  if (username != game.white_player && username != game.black_player) return;
   this.to(game_id).emit("sync-message", {
     author: username,
     message: message,

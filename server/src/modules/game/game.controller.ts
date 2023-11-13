@@ -9,7 +9,7 @@ async function createGameHandler(
   reply: FastifyReply
 ) {
   try {
-    const id = request.body.id;
+    const username = request.body.username;
     const side = request.body.side;
     const token = request.cookies["accessToken"]!;
 
@@ -31,8 +31,8 @@ async function createGameHandler(
         error: "Token does not associate to any user.",
       });
     }
-    const game = await createGame(id, side);
-    const game_cache = { ...game, host: id, players: 1 };
+    const game = await createGame(username, side);
+    const game_cache = { ...game, host: username, players: 1 };
     await publisher.set(game.id, JSON.stringify(game_cache));
     return reply.status(201).send({
       message: game.id,

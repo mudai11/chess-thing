@@ -22,7 +22,7 @@ export default async function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <NextTopLoader
-            color="#f59e0b"
+            color="#4b7399"
             height={4}
             crawlSpeed={200}
             easing="ease"
