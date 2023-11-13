@@ -54,16 +54,16 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
       setNavIndex(null);
       updateLobby({
         type: "setPng",
-        payload: lobby.game!.pgn(),
+        payload: lobby.game.pgn(),
       });
       let kingSquare = undefined;
-      if (lobby.game!.inCheck()) {
-        const kingPos = lobby.game!.board().reduce((acc, row, index) => {
+      if (lobby.game.inCheck()) {
+        const kingPos = lobby.game.board().reduce((acc, row, index) => {
           const squareIndex = row.findIndex(
             (square) =>
               square &&
               square.type === "k" &&
-              square.color === lobby.game!.turn()
+              square.color === lobby.game.turn()
           );
           return squareIndex >= 0
             ? `${String.fromCharCode(squareIndex + 97)}${8 - index}`
@@ -103,18 +103,18 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
       promotion: "q",
     };
 
-    const turn = lobby.game!.turn();
+    const turn = lobby.game.turn();
     if (lobby.side != turn) return false;
 
     const move = makeMove(moveDetails);
     if (!move) return false;
-    socket.emit("move", turn, moveDetails, id, user?.id);
+    socket.emit("move", turn, moveDetails, id, user.id);
     return true;
   }
 
   function getNavMoveSquares() {
     if (navIndex === null) return;
-    const history = lobby.game!.history({ verbose: true });
+    const history = lobby.game.history({ verbose: true });
 
     if (!history.length) return;
 
@@ -125,7 +125,7 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
   }
 
   function getMoveOptions(square: Square) {
-    const moves = lobby.game!.moves({
+    const moves = lobby.game.moves({
       square,
       verbose: true,
     }) as Move[];
@@ -139,9 +139,9 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
     moves.map((move) => {
       newSquares[move.to] = {
         background:
-          lobby.game!.get(move.to as Square) &&
-          lobby.game!.get(move.to as Square)?.color !==
-            lobby.game!.get(square)?.color
+          lobby.game.get(move.to as Square) &&
+          lobby.game.get(move.to as Square)?.color !==
+            lobby.game.get(square)?.color
             ? "radial-gradient(circle, rgba(0,0,0,.1) 85%, transparent 85%)"
             : "radial-gradient(circle, rgba(0,0,0,.1) 25%, transparent 25%)",
         borderRadius: "50%",
@@ -155,7 +155,7 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
   }
 
   function onPieceDragBegin(_: string, sourceSquare: Square) {
-    if (lobby.side !== lobby.game!.turn() || navFen || lobby.end_reason) return;
+    if (lobby.side !== lobby.game.turn() || navFen || lobby.end_reason) return;
 
     getMoveOptions(sourceSquare);
   }
@@ -171,7 +171,7 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
       <Chessboard
         customDarkSquareStyle={{ backgroundColor: "#4b7399" }}
         customLightSquareStyle={{ backgroundColor: "#faf9f6" }}
-        position={navFen || lobby.game!.fen()}
+        position={navFen || lobby.game.fen()}
         boardOrientation={lobby.side === "b" ? "black" : "white"}
         onPieceDragBegin={onPieceDragBegin}
         onPieceDragEnd={onPieceDragEnd}

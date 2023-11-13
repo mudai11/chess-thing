@@ -91,6 +91,8 @@ export async function move(
     } else {
       await publisher.set(game_id, JSON.stringify(game));
     }
+  } else {
+    return;
   }
 }
 
