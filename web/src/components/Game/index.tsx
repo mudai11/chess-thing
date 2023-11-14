@@ -1,27 +1,33 @@
 "use client";
 
-import { Chessboard } from "react-chessboard";
-import { useState, useEffect, FC, useReducer } from "react";
+import { Chessboard, ClearPremoves } from "react-chessboard";
+import { useState, useEffect, FC, useReducer, useRef } from "react";
 import { useUserStore } from "@/store/user-store";
 import { useLobbyStore } from "@/store/lobby-store";
 import { SocketService } from "@/utils/socket";
 import { squareReducer } from "./reducers";
 import type { Move, Square } from "chess.js";
 import { injectSocket } from "./socket";
+import MoveList from "./MoveList";
+import MoveNavigation from "./MoveNavigation";
+import PlayersShowcase from "./PlayersShowcase";
+import Chat from "./Chat";
+import Overlay from "./Overlay";
+import { Copy } from "lucide-react";
+import { env } from "@/../env";
+import CopyLink from "./CopyLink";
 
 const socket_service = SocketService.getInstance();
 const socket = socket_service.getSocket();
 
-interface ChessboardComponentProps {
+interface GameProps {
   id: string;
 }
 
-const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
+const Game: FC<GameProps> = ({ id }) => {
   const user = useUserStore((state) => state.user);
   const lobby = useLobbyStore((state) => state.lobby);
   const updateLobby = useLobbyStore((state) => state.updateLobby);
-  // const start = useLobbyStore((state) => state.start);
-  // const reset = useLobbyStore((state) => state.reset);
   const [customSquares, updateCustomSquares] = useReducer(squareReducer, {
     options: {},
     lastMove: {},
@@ -30,20 +36,51 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
   });
   const [navFen, setNavFen] = useState<string | null>(null);
   const [navIndex, setNavIndex] = useState<number | null>(null);
+  const [boardWidth, setBoardWidth] = useState(750);
+  const initialized = useRef(false);
+  const chessboardRef = useRef<ClearPremoves>(null);
 
   useEffect(() => {
     if (!user) return;
     socket.connect();
     injectSocket(socket, id, user.username, updateLobby, makeMove);
-
+    window.addEventListener("resize", handleResize);
+    handleResize();
     return () => {
-      if (user) socket.emit("leave-lobby", id, user.username);
-      socket.removeAllListeners();
-      socket.disconnect();
-      updateLobby({ type: "clearLobby", payload: null });
+      if (process.env.NODE_ENV === "development") {
+        if (initialized.current) {
+          if (user) socket.emit("leave-lobby", id, user.username);
+          socket.removeAllListeners();
+          socket.disconnect();
+          updateLobby({ type: "clearLobby", payload: null });
+          window.removeEventListener("resize", handleResize);
+        }
+        initialized.current = true;
+      }
+      if (process.env.NODE_ENV === "production") {
+        if (user) socket.emit("leave-lobby", id, user.username);
+        socket.removeAllListeners();
+        socket.disconnect();
+        updateLobby({ type: "clearLobby", payload: null });
+        window.removeEventListener("resize", handleResize);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, user]);
+
+  function handleResize() {
+    if (window.innerWidth >= 1200) {
+      setBoardWidth(750);
+    } else if (window.innerWidth >= 800) {
+      setBoardWidth(580);
+    } else if (window.innerWidth >= 580) {
+      setBoardWidth(480);
+    } else if (window.innerWidth >= 500) {
+      setBoardWidth(350);
+    } else if (window.innerWidth <= 380) {
+      setBoardWidth(300);
+    }
+  }
 
   function makeMove(m: { from: string; to: string; promotion?: string }) {
     try {
@@ -112,6 +149,32 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
     return true;
   }
 
+  function navigateMove(index: number | null | "prev") {
+    const history = lobby.game.history({ verbose: true });
+
+    if (
+      index === null ||
+      (index !== "prev" && index >= history.length - 1) ||
+      !history.length
+    ) {
+      // last move
+      setNavIndex(null);
+      setNavFen(null);
+      return;
+    }
+
+    if (index === "prev") {
+      index = history.length - 2;
+    } else if (index < 0) {
+      index = 0;
+    }
+
+    chessboardRef.current?.clearPremoves(false);
+
+    setNavIndex(index);
+    setNavFen(history[index].after);
+  }
+
   function getNavMoveSquares() {
     if (navIndex === null) return;
     const history = lobby.game.history({ verbose: true });
@@ -167,25 +230,39 @@ const ChessboardComponent: FC<ChessboardComponentProps> = ({ id }) => {
   if (lobby.side === "s") return <div>loading...</div>;
 
   return (
-    <div className="w-[560px]">
-      <Chessboard
-        customDarkSquareStyle={{ backgroundColor: "#4b7399" }}
-        customLightSquareStyle={{ backgroundColor: "#faf9f6" }}
-        position={navFen || lobby.game.fen()}
-        boardOrientation={lobby.side === "b" ? "black" : "white"}
-        onPieceDragBegin={onPieceDragBegin}
-        onPieceDragEnd={onPieceDragEnd}
-        onPieceDrop={onDrop}
-        arePremovesAllowed={!navFen}
-        customSquareStyles={{
-          ...(navIndex === null ? customSquares.lastMove : getNavMoveSquares()),
-          ...(navIndex === null ? customSquares.check : {}),
-          ...customSquares.rightClicked,
-          ...(navIndex === null ? customSquares.options : {}),
-        }}
-      />
-    </div>
+    <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-10 lg:gap-10 2xl:gap-16">
+      <section className="relative h-min">
+        <Overlay />
+        <Chessboard
+          ref={chessboardRef}
+          customDarkSquareStyle={{ backgroundColor: "#4b7399" }}
+          customLightSquareStyle={{ backgroundColor: "#faf9f6" }}
+          position={navFen || lobby.game.fen()}
+          boardOrientation={lobby.side === "b" ? "black" : "white"}
+          onPieceDragBegin={onPieceDragBegin}
+          onPieceDragEnd={onPieceDragEnd}
+          onPieceDrop={onDrop}
+          arePremovesAllowed={!navFen}
+          customSquareStyles={{
+            ...(navIndex === null
+              ? customSquares.lastMove
+              : getNavMoveSquares()),
+            ...(navIndex === null ? customSquares.check : {}),
+            ...customSquares.rightClicked,
+            ...(navIndex === null ? customSquares.options : {}),
+          }}
+          boardWidth={boardWidth}
+        />
+      </section>
+      <section className="flex max-w-lg min-w-[300px] flex-1 flex-col items-center justify-center gap-4">
+        <PlayersShowcase />
+        <CopyLink id={id} />
+        <MoveList navIndex={navIndex} navigateMove={navigateMove} />
+        <MoveNavigation navIndex={navIndex} navigateMove={navigateMove} />
+        <Chat id={id} socket={socket} />
+      </section>
+    </main>
   );
 };
 
-export default ChessboardComponent;
+export default Game;

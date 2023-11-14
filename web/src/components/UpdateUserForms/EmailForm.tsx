@@ -82,7 +82,7 @@ const EmailForm: FC<EmailFormProps> = ({ user }) => {
             </Label>
             <Input
               id="email"
-              className="w-[400px]"
+              className="max-w-[400px]"
               size={32}
               {...register("email")}
             />

@@ -7,8 +7,8 @@ type Lobby = {
   png: string | null;
   black: string | null;
   white: string | null;
-  black_connected: boolean;
-  white_connected: boolean;
+  black_connected: boolean | null;
+  white_connected: boolean | null;
   game: TChess;
   side: string;
   end_reason: Game["end_reason"] | null;
@@ -82,8 +82,8 @@ const reducer = (state: LobbyStoreState, action: Action) => {
           png: null,
           black: null,
           white: null,
-          black_connected: false,
-          white_connected: false,
+          black_connected: null,
+          white_connected: null,
           game: new Chess(),
           side: "s",
           count: 60,
@@ -114,8 +114,8 @@ const useLobbyStore = create<LobbyStoreState & lobbyStoreAction>()((set) => ({
     png: null,
     black: null,
     white: null,
-    black_connected: false,
-    white_connected: false,
+    black_connected: null,
+    white_connected: null,
     game: new Chess(),
     side: "s",
     end_reason: null,

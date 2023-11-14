@@ -1,5 +1,4 @@
 import EmailForm from "@/components/UpdateUserForms/EmailForm";
-import ImageForm from "@/components/UpdateUserForms/ImageForm";
 import PasswordForm from "@/components/UpdateUserForms/PasswordForm";
 import UserNameForm from "@/components/UpdateUserForms/UsernameForm";
 import { useServerSession } from "@/hooks/useServerSession";
@@ -20,8 +19,7 @@ export default async function Settings() {
     <div className="max-w-4xl mx-auto py-12">
       <div className="grid items-start gap-8">
         <h1 className="font-bold text-3xl md:text-4xl">Settings</h1>
-        <div className="grid gap-5">
-          {!user.with_provider && <ImageForm user={user} />}
+        <div className="grid gap-5 px-4">
           <UserNameForm user={user} />
           {!user.with_provider && <EmailForm user={user} />}
           {!user.with_provider && <PasswordForm />}

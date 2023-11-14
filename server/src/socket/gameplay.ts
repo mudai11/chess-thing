@@ -18,7 +18,10 @@ export async function joinLobby(
     if (game.host === username) {
       this.join(game_id);
       const side = game.black_player ? "b" : "w";
-      this.nsp.to(game_id).emit("joined-lobby", side, username);
+      this.nsp.to(game_id).emit("joined-lobby", side, username, {
+        white: game.white_player,
+        black: game.black_player,
+      });
       return;
     }
     if (game.players === 2) {
@@ -26,12 +29,22 @@ export async function joinLobby(
       return;
     }
     this.join(game_id);
-    const side = game.black_player ? "w" : "b";
-    this.nsp.to(game_id).emit("joined-lobby", side, username);
     game.players = 2;
-    game.white_player
-      ? (game.black_player = username)
-      : (game.white_player = username);
+
+    if (game.white_player) {
+      game.black_player = username;
+      this.nsp.to(game_id).emit("joined-lobby", "b", username, {
+        white: game.white_player,
+        black: game.black_player,
+      });
+    } else {
+      game.white_player = username;
+      this.nsp.to(game_id).emit("joined-lobby", "w", username, {
+        white: game.white_player,
+        black: game.black_player,
+      });
+    }
+
     await publisher.set(game_id, JSON.stringify(game));
   } catch (e) {
     console.log(e);
@@ -60,7 +73,7 @@ export async function move(
     const new_move = chess.move(move);
     if (new_move) {
       game.pgn = chess.pgn();
-      this.to(game_id).emit("sync-move", side, move);
+      this.to(game_id).emit("sync-move", move);
       if (chess.isGameOver()) {
         let reason: Game["end_reason"] = null;
         let the_winner: string | null = null;
@@ -140,7 +153,7 @@ export async function move(
           });
         }
 
-        await publisher.del(game_id);
+        this.nsp.to(game_id).emit("game-over", reason);
       } else {
         await publisher.set(game_id, JSON.stringify(game));
       }
@@ -160,7 +173,14 @@ export async function leaveLobby(
   const active_game = await publisher.get(game_id);
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
-  if (game.end_reason || game.winner) return;
+  if (game.end_reason || game.winner) {
+    if (game.players === 2) {
+      game.players = 1;
+      await publisher.set(game_id, JSON.stringify(game));
+    }
+    if (game.players === 1) await publisher.del(game_id);
+    return;
+  }
   if (game.players === 1) {
     try {
       await db.game.delete({
@@ -177,11 +197,13 @@ export async function leaveLobby(
   if (game.white_player === username) {
     game.winner = game.black_player;
     game.end_reason = "WHITE_DISCONNECTED";
-  } else {
+  } else if (game.black_player === username) {
     game.winner = game.white_player;
     game.end_reason = "BLACK_DISCONNECTED";
   }
+  await publisher.set(game_id, JSON.stringify(game));
   const { host, players, id, ...rest } = game;
+  this.nsp.to(game_id).emit("game-over", game.end_reason);
   try {
     await db.game.update({
       where: {
@@ -191,7 +213,6 @@ export async function leaveLobby(
         ...rest,
       },
     });
-    await publisher.del(game_id);
   } catch (e) {
     console.log(e);
   }

@@ -74,7 +74,7 @@ const PasswordForm = () => {
             <Label htmlFor="old_password">Old password</Label>
             <Input
               id="old_password"
-              className="w-[400px]"
+              className="max-w-[400px]"
               size={32}
               type="password"
               {...register("old_password")}
@@ -87,7 +87,7 @@ const PasswordForm = () => {
             <Label htmlFor="new_password">New password</Label>
             <Input
               id="new_password"
-              className="w-[400px]"
+              className="max-w-[400px]"
               size={32}
               type="password"
               {...register("new_password")}
@@ -100,7 +100,7 @@ const PasswordForm = () => {
             <Label htmlFor="confirm_password">Confirm password</Label>
             <Input
               id="confirm_password"
-              className="w-[400px]"
+              className="max-w-[400px]"
               size={32}
               type="password"
               {...register("confirm_password")}

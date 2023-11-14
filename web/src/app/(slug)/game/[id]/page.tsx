@@ -1,4 +1,4 @@
-import ChessboardComponent from "@/components/Game";
+import Game from "@/components/Game";
 import { Metadata } from "next";
 
 interface pageProps {
@@ -14,10 +14,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function Game({ params: { id } }: pageProps) {
-  return (
-    <main className="w-screen pt-10 flex flex-col items-center justify-center">
-      <ChessboardComponent id={id} />
-    </main>
-  );
+export default async function GamePage({ params: { id } }: pageProps) {
+  return <Game id={id} />;
 }

@@ -83,9 +83,6 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
           <Link href={`/@${user.username}`}>Profile</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="cursor-pointer">
-          <Link href="/messages">Messages</Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild className="cursor-pointer">
           <Link href="/settings">Settings</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
