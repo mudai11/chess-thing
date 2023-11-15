@@ -13,8 +13,6 @@ import MoveNavigation from "./MoveNavigation";
 import PlayersShowcase from "./PlayersShowcase";
 import Chat from "./Chat";
 import Overlay from "./Overlay";
-import { Copy } from "lucide-react";
-import { env } from "@/../env";
 import CopyLink from "./CopyLink";
 
 const socket_service = SocketService.getInstance();
@@ -34,6 +32,7 @@ const Game: FC<GameProps> = ({ id }) => {
     rightClicked: {},
     check: {},
   });
+  const [moveFrom, setMoveFrom] = useState<string | Square | null>(null);
   const [navFen, setNavFen] = useState<string | null>(null);
   const [navIndex, setNavIndex] = useState<number | null>(null);
   const [boardWidth, setBoardWidth] = useState(750);
@@ -89,10 +88,7 @@ const Game: FC<GameProps> = ({ id }) => {
 
       setNavFen(null);
       setNavIndex(null);
-      updateLobby({
-        type: "setPng",
-        payload: lobby.game.pgn(),
-      });
+
       let kingSquare = undefined;
       if (lobby.game.inCheck()) {
         const kingPos = lobby.game.board().reduce((acc, row, index) => {
@@ -157,7 +153,6 @@ const Game: FC<GameProps> = ({ id }) => {
       (index !== "prev" && index >= history.length - 1) ||
       !history.length
     ) {
-      // last move
       setNavIndex(null);
       setNavFen(null);
       return;
@@ -227,6 +222,52 @@ const Game: FC<GameProps> = ({ id }) => {
     updateCustomSquares({ options: {} });
   }
 
+  function resetFirstMove(square: Square) {
+    setMoveFrom(square);
+    getMoveOptions(square);
+  }
+
+  function onSquareClick(square: Square) {
+    updateCustomSquares({ rightClicked: {} });
+    if (!user || lobby.side !== lobby.game.turn() || navFen || lobby.end_reason)
+      return;
+
+    const turn = lobby.game.turn();
+
+    if (moveFrom === null) {
+      resetFirstMove(square);
+      return;
+    }
+
+    const moveDetails = {
+      from: moveFrom,
+      to: square,
+      promotion: "q",
+    };
+
+    const move = makeMove(moveDetails);
+    if (!move) {
+      resetFirstMove(square);
+    } else {
+      setMoveFrom(null);
+      socket.emit("move", turn, moveDetails, id, user.username);
+    }
+  }
+
+  function onSquareRightClick(square: Square) {
+    const colour = "rgba(0, 0, 255, 0.4)";
+    updateCustomSquares({
+      rightClicked: {
+        ...customSquares.rightClicked,
+        [square]:
+          customSquares.rightClicked[square] &&
+          customSquares.rightClicked[square]?.backgroundColor === colour
+            ? undefined
+            : { backgroundColor: colour },
+      },
+    });
+  }
+
   if (lobby.side === "s") return <div>loading...</div>;
 
   return (
@@ -242,6 +283,8 @@ const Game: FC<GameProps> = ({ id }) => {
           onPieceDragBegin={onPieceDragBegin}
           onPieceDragEnd={onPieceDragEnd}
           onPieceDrop={onDrop}
+          onSquareClick={onSquareClick}
+          onSquareRightClick={onSquareRightClick}
           arePremovesAllowed={!navFen}
           customSquareStyles={{
             ...(navIndex === null

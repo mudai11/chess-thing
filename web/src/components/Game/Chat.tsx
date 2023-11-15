@@ -22,7 +22,8 @@ const Chat: FC<ChatProps> = ({ id, socket }) => {
   const [chatMessages, setChatMessages] = useState<Message[]>([
     {
       author: "",
-      message: `Welcome! You can invite friends to watch or play by sharing the link above. Have fun!`,
+      message:
+        "You can invite friends to play or watch by sharing the link above. Have fun!",
     },
   ]);
   const chatListRef = useRef<HTMLUListElement>(null);
