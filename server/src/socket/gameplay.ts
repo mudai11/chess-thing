@@ -96,7 +96,11 @@ export async function move(
         )
           reason = "DRAW";
 
-        const { host, players, winner, pgn, end_reason, ...rest } = game;
+        game.winner = the_winner;
+        game.end_reason = reason;
+        game.pgn = chess.pgn();
+
+        const { host, players, ...rest } = game;
 
         await db.game.update({
           where: {
@@ -104,9 +108,6 @@ export async function move(
           },
           data: {
             ...rest,
-            winner: the_winner,
-            end_reason: reason,
-            pgn: chess.pgn(),
           },
         });
         if (reason === "DRAW") {
@@ -154,9 +155,8 @@ export async function move(
         }
 
         this.nsp.to(game_id).emit("game-over", reason);
-      } else {
-        await publisher.set(game_id, JSON.stringify(game));
       }
+      await publisher.set(game_id, JSON.stringify(game));
     } else {
       return;
     }

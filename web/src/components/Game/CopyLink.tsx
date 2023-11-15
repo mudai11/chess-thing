@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { useLobbyStore } from "@/store/lobby-store";
 import { Copy, CopyCheckIcon } from "lucide-react";
 import { env } from "@/../env";
+import { Skeleton } from "../ui/skeleton";
 
 interface CopyLinkProps {
   id: string;
@@ -31,7 +32,7 @@ const CopyLink: FC<CopyLinkProps> = ({ id }) => {
   return (
     <div className="mb-2 flex w-full flex-row gap-2 items-center justify-start">
       {lobby.end_reason ? "Archived link:" : "Invite friends:"}
-      <div className="dropdown dropdown-top dropdown-end">
+      <div>
         {copied ? (
           <Button
             className="flex flex-row justify-center items-center p-3 gap-1 h-8 text-xs sm:h-5 sm:text-sm"

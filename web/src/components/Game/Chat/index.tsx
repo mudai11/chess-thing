@@ -9,8 +9,8 @@ import {
 } from "react";
 import { useUserStore } from "@/store/user-store";
 import { Socket } from "socket.io-client";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
 import { Send } from "lucide-react";
 
 interface ChatProps {

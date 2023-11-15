@@ -14,6 +14,7 @@ import PlayersShowcase from "./PlayersShowcase";
 import Chat from "./Chat";
 import Overlay from "./Overlay";
 import CopyLink from "./CopyLink";
+import ChatLoading from "./Chat/ChatLoading";
 
 const socket_service = SocketService.getInstance();
 const socket = socket_service.getSocket();
@@ -268,13 +269,34 @@ const Game: FC<GameProps> = ({ id }) => {
     });
   }
 
-  if (lobby.side === "s") return <div>loading...</div>;
+  if (lobby.side === "s")
+    return (
+      <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-10 lg:gap-10 2xl:gap-16">
+        <section className="relative h-min">
+          <Overlay />
+          <div
+            style={{
+              width: boardWidth,
+              height: boardWidth,
+            }}
+          />
+        </section>
+        <section className="flex max-w-lg min-w-[300px] flex-1 flex-col items-center justify-center gap-4">
+          <PlayersShowcase />
+          <CopyLink id={id} />
+          <MoveList navIndex={navIndex} navigateMove={navigateMove} />
+          <MoveNavigation navIndex={navIndex} navigateMove={navigateMove} />
+          <ChatLoading />
+        </section>
+      </main>
+    );
 
   return (
     <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-10 lg:gap-10 2xl:gap-16">
       <section className="relative h-min">
         <Overlay />
         <Chessboard
+          id="playing-board"
           ref={chessboardRef}
           customDarkSquareStyle={{ backgroundColor: "#4b7399" }}
           customLightSquareStyle={{ backgroundColor: "#faf9f6" }}
