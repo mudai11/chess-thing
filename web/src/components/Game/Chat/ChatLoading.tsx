@@ -9,10 +9,7 @@ const ChatLoading = () => {
         <ul className="mb-4 flex w-full h-full flex-col gap-1 overflow-y-scroll break-words">
           <li className="max-w-[30rem]">
             <span>
-              <span>
-                You can invite friends to play or watch by sharing the link
-                above. Have fun!
-              </span>
+              <span>Entering lobby, please wait...</span>
             </span>
           </li>
         </ul>

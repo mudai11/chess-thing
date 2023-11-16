@@ -13,12 +13,12 @@ const PlayerShowcase: FC<PlayersShowcaseProps> = ({ side }) => {
   const lobby = useLobbyStore((state) => state.lobby);
   const user = useUserStore((state) => state.user);
 
-  if (lobby.side === "s") return <PlayerShowcaseLoading />;
+  if (lobby.side === "s" || !user) return <PlayerShowcaseLoading />;
 
-  if (lobby.black === user?.username) {
-    return side === "top" ? <WhiteSide /> : <BlackSide />;
-  } else {
+  if (lobby.black === user.username) {
     return side === "top" ? <BlackSide /> : <WhiteSide />;
+  } else {
+    return side === "top" ? <WhiteSide /> : <BlackSide />;
   }
 };
 

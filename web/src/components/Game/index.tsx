@@ -15,6 +15,7 @@ import Chat from "./Chat";
 import Overlay from "./Overlay";
 import CopyLink from "./CopyLink";
 import ChatLoading from "./Chat/ChatLoading";
+import GameLoading from "./GameLoading";
 
 const socket_service = SocketService.getInstance();
 const socket = socket_service.getSocket();
@@ -44,8 +45,7 @@ const Game: FC<GameProps> = ({ id }) => {
     if (!user) return;
     socket.connect();
     injectSocket(socket, id, user.username, updateLobby, makeMove);
-    window.addEventListener("resize", handleResize);
-    handleResize();
+
     return () => {
       if (process.env.NODE_ENV === "development") {
         if (initialized.current) {
@@ -53,7 +53,6 @@ const Game: FC<GameProps> = ({ id }) => {
           socket.removeAllListeners();
           socket.disconnect();
           updateLobby({ type: "clearLobby", payload: null });
-          window.removeEventListener("resize", handleResize);
         }
         initialized.current = true;
       }
@@ -62,11 +61,19 @@ const Game: FC<GameProps> = ({ id }) => {
         socket.removeAllListeners();
         socket.disconnect();
         updateLobby({ type: "clearLobby", payload: null });
-        window.removeEventListener("resize", handleResize);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, user]);
+  }, [id, updateLobby, user]);
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   function handleResize() {
     if (window.innerWidth >= 1200) {
@@ -270,26 +277,7 @@ const Game: FC<GameProps> = ({ id }) => {
   }
 
   if (lobby.side === "s")
-    return (
-      <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-10 lg:gap-10 2xl:gap-16">
-        <section className="relative h-min">
-          <Overlay />
-          <div
-            style={{
-              width: boardWidth,
-              height: boardWidth,
-            }}
-          />
-        </section>
-        <section className="flex max-w-lg min-w-[300px] flex-1 flex-col items-center justify-center gap-4">
-          <PlayersShowcase />
-          <CopyLink id={id} />
-          <MoveList navIndex={navIndex} navigateMove={navigateMove} />
-          <MoveNavigation navIndex={navIndex} navigateMove={navigateMove} />
-          <ChatLoading />
-        </section>
-      </main>
-    );
+    return <GameLoading boardWidth={boardWidth} id={id} />;
 
   return (
     <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-10 lg:gap-10 2xl:gap-16">

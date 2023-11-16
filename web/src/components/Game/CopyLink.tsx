@@ -3,7 +3,6 @@ import { Button } from "../ui/button";
 import { useLobbyStore } from "@/store/lobby-store";
 import { Copy, CopyCheckIcon } from "lucide-react";
 import { env } from "@/../env";
-import { Skeleton } from "../ui/skeleton";
 
 interface CopyLinkProps {
   id: string;

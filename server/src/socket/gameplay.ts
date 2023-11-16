@@ -153,7 +153,6 @@ export async function move(
             },
           });
         }
-
         this.nsp.to(game_id).emit("game-over", reason);
       }
       await publisher.set(game_id, JSON.stringify(game));
@@ -174,13 +173,10 @@ export async function leaveLobby(
   if (!active_game) return;
   const game: TCachedGame = JSON.parse(active_game);
   if (game.end_reason || game.winner) {
-    if (game.players === 2) {
-      game.players = 1;
-      await publisher.set(game_id, JSON.stringify(game));
-    }
-    if (game.players === 1) await publisher.del(game_id);
+    await publisher.del(game_id);
     return;
   }
+
   if (game.players === 1) {
     try {
       await db.game.delete({
@@ -201,9 +197,10 @@ export async function leaveLobby(
     game.winner = game.white_player;
     game.end_reason = "BLACK_DISCONNECTED";
   }
-  await publisher.set(game_id, JSON.stringify(game));
+
   const { host, players, id, ...rest } = game;
   this.nsp.to(game_id).emit("game-over", game.end_reason);
+
   try {
     await db.game.update({
       where: {
