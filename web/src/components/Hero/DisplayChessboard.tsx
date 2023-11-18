@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import logo from "../../../public/assets/logo/logo.png";
+import logo from "@/../public/knight.png";
 import Image from "next/image";
 import { memo } from "react";
 

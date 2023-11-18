@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 import { SignupForm } from "@/components/Authenticate/SignupForm";
 import Image from "next/image";
-import banner from "../../../../public/assets/banner/banner.webp";
+import banner from "@/../public/banner.webp";
 import { ArrowLeft } from "lucide-react";
 import { getImage } from "@/utils/getImage";
 
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SignupPage() {
-  const { base64 } = await getImage("./public/assets/banner/banner.webp");
+  const { base64 } = await getImage("./public/banner.webp");
 
   return (
     <div className="flex flex-row w-screen h-screen">
