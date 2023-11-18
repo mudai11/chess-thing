@@ -13,7 +13,7 @@ const WhiteSide = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {lobby.white || "(no one)"}
+        {lobby.white || "(none)"}
       </a>
       <span className="flex items-center gap-1 text-xs">
         white

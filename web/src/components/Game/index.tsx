@@ -14,7 +14,6 @@ import PlayersShowcase from "./PlayersShowcase";
 import Chat from "./Chat";
 import Overlay from "./Overlay";
 import CopyLink from "./CopyLink";
-import ChatLoading from "./Chat/ChatLoading";
 import GameLoading from "./GameLoading";
 
 const socket_service = SocketService.getInstance();

@@ -13,7 +13,7 @@ const BlackSide = () => {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {lobby.black || "(no one)"}
+        {lobby.black || "(none)"}
       </a>
       <span className="flex items-center gap-1 text-xs">
         black
