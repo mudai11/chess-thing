@@ -7,7 +7,7 @@ import { HTMLAttributes } from "react";
 import { Input } from "../ui/input";
 import { Icons } from "../Icons";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { CreateUserSchema, createUserSchema } from "@/types/user";
+import { CreateUserSchema, createUserSchema } from "@/lib/validators/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/useToast";

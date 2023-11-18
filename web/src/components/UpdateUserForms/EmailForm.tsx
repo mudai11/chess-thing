@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "../../../../server/src/types";
+import { User } from "@/types/user";
 import { FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
@@ -17,7 +17,10 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { UpdateUserEmailSchema, updateUserEmailSchema } from "@/types/user";
+import {
+  UpdateUserEmailSchema,
+  updateUserEmailSchema,
+} from "@/lib/validators/user";
 import { Icons } from "../Icons";
 import { env } from "@/../env";
 import { toast } from "@/hooks/useToast";

@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback } from "../../ui/avatar";
 import Image from "next/image";
 import { AvatarProps } from "@radix-ui/react-avatar";
 import { User as UserIcon } from "lucide-react";
-import { User } from "@/../../server/src/types";
+import { User } from "@/types/user";
 
 interface UserAvatarProps extends AvatarProps {
   user: Pick<User, "username" | "image">;

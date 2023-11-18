@@ -1,7 +1,7 @@
 import type { Chess as TChess } from "chess.js";
 import { Chess } from "chess.js";
 import { create } from "zustand";
-import { Game } from "../../../server/src/types";
+import { Game } from "@/types/game";
 
 type Lobby = {
   png: string | null;

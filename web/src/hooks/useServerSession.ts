@@ -1,7 +1,7 @@
 import axios, { AxiosError } from "axios";
 import { headers } from "next/headers";
 import { cache } from "react";
-import { User } from "@/../../server/src/types";
+import { User } from "@/types/user";
 import { env } from "../../env";
 
 export const useServerSession = cache(async () => {

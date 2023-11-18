@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import {
   UpdateUserPasswordSchema,
   updateUserPasswordSchema,
-} from "@/types/user";
+} from "@/lib/validators/user";
 import { Icons } from "../Icons";
 import { env } from "@/../env";
 import { toast } from "@/hooks/useToast";

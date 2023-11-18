@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User } from "../../../../server/src/types";
+import { User } from "@/types/user";
 import { FC } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import {
@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import {
   UpdateUserUsernameSchema,
   updateUserUsernameSchema,
-} from "@/types/user";
+} from "@/lib/validators/user";
 import { Icons } from "../Icons";
 import { env } from "@/../env";
 import { toast } from "@/hooks/useToast";

@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "../../../../server/src/types";
+import { User } from "@/types/user";
 import { FC } from "react";
 import {
   Card,

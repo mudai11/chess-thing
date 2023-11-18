@@ -14,7 +14,7 @@ import { useUserStore } from "@/store/user-store";
 import { useEffect } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { User } from "@/../../server/src/types";
+import { User } from "@/types/user";
 import { env } from "@/../env";
 import { toast } from "@/hooks/useToast";
 

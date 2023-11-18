@@ -1,6 +1,6 @@
 import { Socket } from "socket.io-client";
 import { Action } from "@/store/lobby-store";
-import { Game } from "../../../../server/src/types";
+import { Game } from "@/types/game";
 
 export function injectSocket(
   socket: Socket,
