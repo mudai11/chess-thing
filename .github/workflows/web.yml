@@ -36,7 +36,7 @@ jobs:
     needs: [buildandtest]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: install Vercel CLI
         run: npm install --global vercel@latest
