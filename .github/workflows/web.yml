@@ -33,6 +33,9 @@ jobs:
     name: deployment
     runs-on: ubuntu-latest
     needs: [buildandtest]
+    defaults:
+      run:
+        working-directory: "./web"
 
     steps:
       - uses: actions/checkout@v3
