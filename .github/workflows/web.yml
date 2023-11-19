@@ -1,12 +1,9 @@
-name: CI/CD Nextjs Production Pipeline
+name: Reducing build time on Vercel
 
 on: [push]
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCELORGID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID }}
-  NEXT_PUBLIC_CLIENT_URL: ${{ vars.NEXT_PUBLIC_CLIENT_URL }}
-  NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
-  SERVER_URL: ${{ vars.SERVER_URL }}
 
 defaults:
   run:
@@ -29,33 +26,3 @@ jobs:
 
       - name: lint
         run: npm run lint
-
-      - name: create env file
-        run: echo "SERVER_URL = ${{ env.SERVER_URL }} NEXT_PUBLIC_SERVER_URL = ${{ env.NEXT_PUBLIC_SERVER_URL }} NEXT_PUBLIC_CLIENT_URL =  ${{ env.NEXT_PUBLIC_CLIENT_URL}}" > .env
-
-      - name: build
-        run: npm run build
-        env:
-          SERVER_URL: ${{ env.SERVER_URL }}
-          NEXT_PUBLIC_SERVER_URL: ${{ env.NEXT_PUBLIC_SERVER_URL }}
-          NEXT_PUBLIC_CLIENT_URL: ${{ env.NEXT_PUBLIC_CLIENT_URL }}
-
-  deploy:
-    name: deployment
-    runs-on: ubuntu-latest
-    needs: [buildandtest]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: install Vercel CLI
-        run: npm install --global vercel@latest
-
-      - name: pull Vercel environment information
-        run: vercel pull --yes --environment=production --token=${{ secrets.VERCELTOKEN }}
-
-      - name: build project artifacts
-        run: vercel build --prod --token=${{ secrets.VERCELTOKEN }}
-
-      - name: deploy project artifacts to Vercel
-        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCELTOKEN }}

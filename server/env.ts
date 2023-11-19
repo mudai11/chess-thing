@@ -12,7 +12,7 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     GOOGLE_OAUTH_REDIRECT_URL: z.string().min(1),
   },
-  runtimeEnvStrict: {
+  runtimeEnv: {
     HOST: process.env.HOST,
     PORT: process.env.PORT,
     SECRET_KEY: process.env.SECRET_KEY,
