@@ -17,6 +17,7 @@ export async function injectPlugins(
   await app.register(cors, {
     origin: origin,
     credentials: true,
+    exposedHeaders: ["Set-cookie"],
   });
 
   await app.register(jwt, {
