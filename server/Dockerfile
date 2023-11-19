@@ -32,4 +32,4 @@ COPY --from=builder /app/prisma ./prisma
 RUN npm install --only-production
 RUN npx prisma generate
 
-CMD ["node", "src/main.js"]
+CMD ["node", "index.js"]

@@ -7,8 +7,6 @@ import { injectSchemas } from "./utils/schemas";
 import { injectSocket } from "./socket/socket";
 import Redis from "ioredis";
 import { env } from "../env";
-import { GoogleUserResult } from "./types";
-import { randomUsername } from "./utils/randomusername";
 
 export const app: FastifyInstance = Fastify();
 export const publisher = new Redis(env.REDIS_URL);
@@ -54,7 +52,7 @@ async function build() {
   });
 }
 
-async function main() {
+export async function main() {
   await build();
 
   app.io.on("connection", injectSocket);
@@ -68,5 +66,3 @@ async function main() {
     process.exit(1);
   }
 }
-
-main();

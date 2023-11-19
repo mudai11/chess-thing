@@ -77,7 +77,7 @@ export async function googleAuthHandler(
         httpOnly: true,
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
-        sameSite: "lax",
+        sameSite: "none",
       })
       .redirect(env.ORIGIN);
   } catch (e) {
