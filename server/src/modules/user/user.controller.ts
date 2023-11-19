@@ -41,7 +41,7 @@ async function createUserHandler(
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
-        domain: ".chess-thing-alpha.vercel.app",
+        domain: "chess-thing-server.onrender.com",
       })
       .send({
         message: "Success",
@@ -104,7 +104,7 @@ async function signinUserHandler(
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
-        domain: ".chess-thing-alpha.vercel.app",
+        domain: "chess-thing-server.onrender.com",
       })
       .send({ message: "Success" });
   } catch (e) {
@@ -323,7 +323,7 @@ async function deleteSessionHandler(
         secure: true,
         maxAge: 0,
         sameSite: "none",
-        domain: ".chess-thing-alpha.vercel.app",
+        domain: "chess-thing-server.onrender.com",
       })
       .send({ message: "Success" });
   } catch (e) {
