@@ -11,7 +11,7 @@ async function createGameHandler(
   try {
     const username = request.body.username;
     const side = request.body.side;
-    const token = request.cookies["accessToken"]!;
+    const token = request.cookies["session.access.token"]!;
 
     const decoded: {
       id: string;

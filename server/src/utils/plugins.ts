@@ -23,7 +23,7 @@ export async function injectPlugins(
   await app.register(jwt, {
     secret: secret_key,
     cookie: {
-      cookieName: "accessToken",
+      cookieName: "session.access.token",
       signed: false,
     },
   });

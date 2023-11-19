@@ -35,9 +35,9 @@ async function createUserHandler(
 
     return reply
       .status(201)
-      .setCookie("accessToken", token, {
+      .setCookie("session.access.token", token, {
         path: "/",
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
@@ -97,9 +97,9 @@ async function signinUserHandler(
 
     return reply
       .status(200)
-      .setCookie("accessToken", token, {
+      .setCookie("session.access.token", token, {
         path: "/",
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
@@ -119,7 +119,7 @@ async function updateUserUsernameHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
-  const token = request.cookies["accessToken"];
+  const token = request.cookies["session.access.token"];
   if (!token) {
     return reply.status(401).send({
       error: "Unauthorized.",
@@ -177,7 +177,7 @@ async function updateUserEmailHandler(
   reply: FastifyReply
 ) {
   const body = request.body;
-  const token = request.cookies["accessToken"];
+  const token = request.cookies["session.access.token"];
   if (!token) {
     return reply.status(401).send({
       error: "Unauthorized.",
@@ -233,7 +233,7 @@ async function updateUserPasswordHandler(
   try {
     const body = request.body;
     updateUserPasswordSchema.parse(body);
-    const token = request.cookies["accessToken"];
+    const token = request.cookies["session.access.token"];
     if (!token) {
       return reply.status(401).send({
         error: "Unauthorized.",
@@ -289,7 +289,7 @@ async function deleteSessionHandler(
   reply: FastifyReply
 ) {
   try {
-    const token = request.cookies["accessToken"];
+    const token = request.cookies["session.access.token"];
     if (!token) {
       return reply.status(401).send({
         error: "You're not logged in.",
@@ -315,9 +315,9 @@ async function deleteSessionHandler(
 
     return reply
       .status(200)
-      .setCookie("accessToken", "", {
+      .setCookie("session.access.token", "", {
         path: "/",
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         maxAge: 0,
         sameSite: "none",

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  let accessToken = request.cookies.get("accessToken");
+  let accessToken = request.cookies.get("session.access.token");
   if (request.nextUrl.pathname.toString() === "/sign-in") {
     if (accessToken) {
       return NextResponse.redirect(new URL("/", request.url));

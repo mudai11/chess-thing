@@ -14,7 +14,7 @@ async function authenticateUserHandler(
   reply: FastifyReply
 ) {
   try {
-    const token = request.cookies["accessToken"];
+    const token = request.cookies["session.access.token"];
     if (!token) {
       return reply.status(401).send({
         error: "You're not logged in.",
@@ -72,9 +72,9 @@ export async function googleAuthHandler(
     }
 
     return reply
-      .setCookie("accessToken", access_token, {
+      .setCookie("session.access.token", access_token, {
         path: "/",
-        httpOnly: false,
+        httpOnly: true,
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
