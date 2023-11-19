@@ -35,7 +35,11 @@ const Overlay = () => {
               ? "White won, black abondoned."
               : lobby.end_reason === "WHITE_DISCONNECTED" &&
                 "Black won, white abondoned."}
-            <Button variant="link" onClick={() => setOpen(false)}>
+            <Button
+              variant="link"
+              onClick={() => setOpen(false)}
+              className="text-white"
+            >
               Continue
             </Button>
           </div>
