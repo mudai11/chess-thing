@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  app:
+    platform: "linux/amd64"
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    image: chess-thing-web
+    environment:
+      - SERVER_URL=${SERVER_URL}
+      - NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
+      - NEXT_PUBLIC_CLIENT_URL=${NEXT_PUBLIC_CLIENT_URL}
