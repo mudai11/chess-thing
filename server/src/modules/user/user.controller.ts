@@ -40,6 +40,7 @@ async function createUserHandler(
         httpOnly: true,
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
+        sameSite: "lax",
       })
       .send({
         message: "Success",
@@ -101,6 +102,7 @@ async function signinUserHandler(
         httpOnly: true,
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
+        sameSite: "lax",
       })
       .send({ message: "Success" });
   } catch (e) {
@@ -318,6 +320,7 @@ async function deleteSessionHandler(
         httpOnly: true,
         secure: true,
         maxAge: 0,
+        sameSite: "lax",
       })
       .send({ message: "Success" });
   } catch (e) {

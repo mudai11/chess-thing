@@ -39,6 +39,7 @@ async function build() {
     app,
     env.ORIGIN,
     env.SECRET_KEY,
+    env.SERVER_URL,
     env.GOOGLE_CLIENT_ID,
     env.GOOGLE_CLIENT_SECRET,
     env.GOOGLE_OAUTH_REDIRECT_URL

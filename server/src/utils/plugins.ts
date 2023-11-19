@@ -9,6 +9,7 @@ export async function injectPlugins(
   app: FastifyInstance,
   origin: string,
   secret_key: string,
+  server_url: string,
   google_client_id: string,
   google_client_secret: string,
   google_oauth_redirect_url: string
@@ -55,7 +56,7 @@ export async function injectPlugins(
       auth: oauth.GOOGLE_CONFIGURATION,
     },
     startRedirectPath: "/api/auth/google",
-    callbackUri: google_oauth_redirect_url,
+    callbackUri: `${server_url}/${google_oauth_redirect_url}`,
   });
 
   await app.register(io, {
