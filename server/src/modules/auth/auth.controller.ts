@@ -78,7 +78,7 @@ export async function googleAuthHandler(
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
-        domain: ".onrender.com",
+        domain: ".chess-thing-alpha.vercel.app",
       })
       .redirect(env.ORIGIN);
   } catch (e) {
