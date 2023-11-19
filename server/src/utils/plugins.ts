@@ -17,20 +17,6 @@ export async function injectPlugins(
   await app.register(cors, {
     origin: [origin, "http://localhost:3000"],
     credentials: true,
-    exposedHeaders: ["Set-cookie"],
-    allowedHeaders: [
-      "Accept",
-      "Accept-Language",
-      "Access-Control-Allow-Headers",
-      "Access-Control-Allow-Credentials",
-      "Content-Language",
-      "Content-Type",
-      "Authorization",
-      "Cookie",
-      "X-Requested-With",
-      "Origin",
-      "Host",
-    ],
   });
 
   await app.register(jwt, {
