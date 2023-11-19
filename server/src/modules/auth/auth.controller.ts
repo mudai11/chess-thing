@@ -78,7 +78,6 @@ export async function googleAuthHandler(
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
-        domain: "chess-thing-server.onrender.com",
       })
       .redirect(env.ORIGIN);
   } catch (e) {
