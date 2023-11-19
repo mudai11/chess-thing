@@ -78,7 +78,7 @@ export async function googleAuthHandler(
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
-        domain: ".vercel.app",
+        domain: ".onrender.com",
       })
       .redirect(env.ORIGIN);
   } catch (e) {
