@@ -30,8 +30,15 @@ jobs:
       - name: lint
         run: npm run lint
 
+      - name: check env vars
+        run: echo "server  ${{ env.SERVER_URL }} ${{ env.NEXT_PUBLIC_SERVER_URL }}. client  ${{ env.NEXT_PUBLIC_CLIENT_URL}}!"
+
       - name: build
         run: npm run build
+        env:
+          SERVER_URL: ${{ env.SERVER_URL }}
+          NEXT_PUBLIC_SERVER_URL: ${{ env.NEXT_PUBLIC_SERVER_URL }}
+          NEXT_PUBLIC_CLIENT_URL: ${{ env.NEXT_PUBLIC_CLIENT_URL }}
 
   deploy:
     name: deployment
