@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  chess-thing-server:
+    platform: "linux/amd64"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    image: chess-thing-server
+    environment:
+      - HOST=${HOST}
+      - PORT=${PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - ORIGIN=${ORIGIN}
+      - REDIS_URL=${REDIS_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_OAUTH_REDIRECT_URL=${GOOGLE_OAUTH_REDIRECT_URL}
