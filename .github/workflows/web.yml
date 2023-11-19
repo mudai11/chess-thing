@@ -4,6 +4,9 @@ on: [push]
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCELORGID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCELPROJECTID }}
+  NEXT_PUBLIC_CLIENT_URL: ${{ vars.NEXT_PUBLIC_CLIENT_URL }}
+  NEXT_PUBLIC_SERVER_URL: ${{ vars.NEXT_PUBLIC_SERVER_URL }}
+  SERVER_URL: ${{ vars.SERVER_URL }}
 
 defaults:
   run:
