@@ -75,9 +75,8 @@ export async function googleAuthHandler(
       .setCookie("accessToken", access_token, {
         path: "/",
         httpOnly: true,
-        secure: true,
+        secure: false,
         maxAge: 10 * 24 * 60 * 60,
-        sameSite: "none",
       })
       .redirect(env.ORIGIN);
   } catch (e) {

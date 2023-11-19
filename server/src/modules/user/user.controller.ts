@@ -38,9 +38,8 @@ async function createUserHandler(
       .setCookie("accessToken", token, {
         path: "/",
         httpOnly: true,
-        secure: true,
+        secure: false,
         maxAge: 10 * 24 * 60 * 60,
-        sameSite: "none",
       })
       .send({
         message: "Success",
@@ -100,9 +99,8 @@ async function signinUserHandler(
       .setCookie("accessToken", token, {
         path: "/",
         httpOnly: true,
-        secure: true,
+        secure: false,
         maxAge: 10 * 24 * 60 * 60,
-        sameSite: "none",
       })
       .send({ message: "Success" });
   } catch (e) {
@@ -318,9 +316,8 @@ async function deleteSessionHandler(
       .setCookie("accessToken", "", {
         path: "/",
         httpOnly: true,
-        secure: true,
+        secure: false,
         maxAge: 0,
-        sameSite: "none",
       })
       .send({ message: "Success" });
   } catch (e) {
