@@ -37,9 +37,10 @@ async function createUserHandler(
       .status(201)
       .setCookie("accessToken", token, {
         path: "/",
-        httpOnly: true,
-        secure: false,
+        httpOnly: false,
+        secure: true,
         maxAge: 10 * 24 * 60 * 60,
+        sameSite: "none",
       })
       .send({
         message: "Success",
@@ -98,9 +99,10 @@ async function signinUserHandler(
       .status(200)
       .setCookie("accessToken", token, {
         path: "/",
-        httpOnly: true,
-        secure: false,
+        httpOnly: false,
+        secure: true,
         maxAge: 10 * 24 * 60 * 60,
+        sameSite: "none",
       })
       .send({ message: "Success" });
   } catch (e) {
@@ -315,9 +317,10 @@ async function deleteSessionHandler(
       .status(200)
       .setCookie("accessToken", "", {
         path: "/",
-        httpOnly: true,
-        secure: false,
+        httpOnly: false,
+        secure: true,
         maxAge: 0,
+        sameSite: "none",
       })
       .send({ message: "Success" });
   } catch (e) {
