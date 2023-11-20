@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuItem,
 } from "../../ui/dropdown-menu";
-import { FC } from "react";
+import { FC, useState } from "react";
 import UserAvatar from "./UserAvatar";
 import Link from "next/link";
 import { useUserStore } from "@/store/user-store";
@@ -26,6 +26,7 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
   const clearUser = useUserStore((state) => state.clearUser);
   const setUser = useUserStore((state) => state.setUser);
   const { push, refresh } = useRouter();
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     setUser(user);
@@ -33,7 +34,9 @@ const UserMenu: FC<UserMenuProps> = ({ user }) => {
   }, [user]);
 
   const signoutHandler = async () => {
+    if (loggingOut) return;
     try {
+      setLoggingOut(true);
       const { data } = await axios.delete(
         `${env.NEXT_PUBLIC_SERVER_URL}/api/users/sign-out`,
         {

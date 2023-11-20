@@ -32,6 +32,7 @@ type TSide = "white" | "black";
 export function CreateLobbyDialog() {
   const [side, setSide] = useState<TSide>("white");
   const [loading, setLoading] = useState<boolean>(false);
+  const [redirecting, setRedirecting] = useState<boolean>(false);
   const user = useUserStore((state) => state.user);
   const { push } = useRouter();
   const handleSideChange = (value: TSide) => {
@@ -39,6 +40,7 @@ export function CreateLobbyDialog() {
   };
 
   const handleCreateLobby = async () => {
+    if (redirecting) return;
     try {
       setLoading(true);
       const { data } = await axios.post(
@@ -56,6 +58,7 @@ export function CreateLobbyDialog() {
         title: "Game lobby created, redirecting...",
         description: "A game lobby is successfully created.",
       });
+      setRedirecting(true);
     } catch (e) {
       if (e instanceof AxiosError) {
         toast({

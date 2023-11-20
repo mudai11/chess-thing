@@ -15,7 +15,7 @@ export async function injectPlugins(
   google_oauth_redirect_url: string
 ) {
   await app.register(cors, {
-    origin: [origin, "http://localhost:3000"],
+    origin: origin,
     credentials: true,
   });
 

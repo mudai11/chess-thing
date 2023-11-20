@@ -22,6 +22,7 @@ import { app } from "../../main";
 import { Prisma } from "@prisma/client";
 import { DeleteGameSchema } from "../game/game.schema";
 import { ZodError } from "zod";
+import { env } from "../../../env";
 
 async function createUserHandler(
   request: FastifyRequest<{ Body: CreateUserSchema }>,
@@ -41,7 +42,7 @@ async function createUserHandler(
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
-        domain: ".railway.app",
+        domain: env.DOMAIN,
       })
       .send({
         message: "Success",
@@ -104,7 +105,7 @@ async function signinUserHandler(
         secure: true,
         maxAge: 10 * 24 * 60 * 60,
         sameSite: "none",
-        domain: ".railway.app",
+        domain: env.DOMAIN,
       })
       .send({ message: "Success" });
   } catch (e) {
@@ -323,7 +324,7 @@ async function deleteSessionHandler(
         secure: true,
         maxAge: 0,
         sameSite: "none",
-        domain: ".railway.app",
+        domain: env.DOMAIN,
       })
       .send({ message: "Success" });
   } catch (e) {
