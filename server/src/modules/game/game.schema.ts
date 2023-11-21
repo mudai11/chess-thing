@@ -6,17 +6,17 @@ const createGameSchema = z.object({
   side: z.enum(["black", "white"]),
 });
 
-const deleteGameSchema = z.object({
+const gameIdSchema = z.object({
   id: z.string(),
 });
 
 export type CreateGameSchema = z.infer<typeof createGameSchema>;
-export type DeleteGameSchema = z.infer<typeof deleteGameSchema>;
+export type GameIdSchema = z.infer<typeof gameIdSchema>;
 
 export const { schemas: gameSchemas, $ref } = buildJsonSchemas(
   {
     createGameSchema,
-    deleteGameSchema,
+    gameIdSchema,
   },
   { $id: "game" }
 );

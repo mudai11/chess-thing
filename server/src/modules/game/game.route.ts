@@ -1,5 +1,9 @@
 import { FastifyInstance } from "fastify";
-import { deleteGameHandler, getGamesHandler } from "./game.controller";
+import {
+  deleteGameHandler,
+  getGameHandler,
+  getGamesHandler,
+} from "./game.controller";
 import { createGameHandler } from "./game.controller";
 import { $ref } from "./game.schema";
 import { $ref as sharedRef } from "../shared/response.schema";
@@ -25,7 +29,7 @@ export default async function gameRoutes(app: FastifyInstance) {
     {
       preHandler: [app.authenticate],
       schema: {
-        body: $ref("deleteGameSchema"),
+        body: $ref("gameIdSchema"),
         response: {
           200: sharedRef("defaultSuccessResponseSchema"),
           400: sharedRef("defaultErrorResponseSchema"),
@@ -34,6 +38,8 @@ export default async function gameRoutes(app: FastifyInstance) {
     },
     deleteGameHandler
   );
+
+  app.get("/:id", getGameHandler);
 
   app.get("/", getGamesHandler);
 }

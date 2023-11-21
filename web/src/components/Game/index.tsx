@@ -27,6 +27,7 @@ const Game: FC<GameProps> = ({ id }) => {
   const user = useUserStore((state) => state.user);
   const lobby = useLobbyStore((state) => state.lobby);
   const updateLobby = useLobbyStore((state) => state.updateLobby);
+  const [mounted, setMounted] = useState(false);
   const [customSquares, updateCustomSquares] = useReducer(squareReducer, {
     options: {},
     lastMove: {},
@@ -39,6 +40,10 @@ const Game: FC<GameProps> = ({ id }) => {
   const [boardWidth, setBoardWidth] = useState(750);
   const initialized = useRef(false);
   const chessboardRef = useRef<ClearPremoves>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -79,7 +84,7 @@ const Game: FC<GameProps> = ({ id }) => {
       setBoardWidth(750);
     } else if (window.innerWidth >= 800) {
       setBoardWidth(580);
-    } else if (window.innerWidth >= 580) {
+    } else if (window.innerWidth >= 600) {
       setBoardWidth(480);
     } else if (window.innerWidth >= 500) {
       setBoardWidth(350);
@@ -275,11 +280,11 @@ const Game: FC<GameProps> = ({ id }) => {
     });
   }
 
-  if (lobby.side === "s")
+  if (!mounted || lobby.side === "s")
     return <GameLoading boardWidth={boardWidth} id={id} />;
 
   return (
-    <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-10 lg:gap-10 2xl:gap-16">
+    <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-16 lg:gap-10 2xl:gap-16">
       <section className="relative h-min">
         <Overlay />
         <Chessboard

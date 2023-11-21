@@ -2,8 +2,7 @@ import { FC } from "react";
 import { useLobbyStore } from "@/store/lobby-store";
 import { useUserStore } from "@/store/user-store";
 import PlayerShowcaseLoading from "./PlayerShowcaseLoading";
-import WhiteSide from "./WhiteSide";
-import BlackSide from "./BlackSide";
+import Side from "./Side";
 
 interface PlayersShowcaseProps {
   side: string;
@@ -16,9 +15,9 @@ const PlayerShowcase: FC<PlayersShowcaseProps> = ({ side }) => {
   if (lobby.side === "s" || !user) return <PlayerShowcaseLoading />;
 
   if (lobby.black === user.username) {
-    return side === "top" ? <BlackSide /> : <WhiteSide />;
+    return side === "left" ? <Side side="black" /> : <Side side="white" />;
   } else {
-    return side === "top" ? <WhiteSide /> : <BlackSide />;
+    return side === "left" ? <Side side="white" /> : <Side side="black" />;
   }
 };
 

@@ -24,8 +24,16 @@ async function deleteGame(id: string) {
   });
 }
 
+async function getGame(id: string) {
+  return await db.game.findUnique({
+    where: {
+      id,
+    },
+  });
+}
+
 async function getGames() {
   return await db.game.findMany();
 }
 
-export { createGame, deleteGame, getGames };
+export { createGame, deleteGame, getGame, getGames };

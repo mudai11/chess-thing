@@ -20,7 +20,6 @@ import {
 } from "./user.schema";
 import { app } from "../../main";
 import { Prisma } from "@prisma/client";
-import { DeleteGameSchema } from "../game/game.schema";
 import { ZodError } from "zod";
 import { env } from "../../../env";
 
@@ -336,7 +335,7 @@ async function deleteSessionHandler(
 
 async function deleteUserHandler(
   request: FastifyRequest<{
-    Body: DeleteGameSchema;
+    Body: { id: string };
   }>,
   reply: FastifyReply
 ) {
