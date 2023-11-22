@@ -11,7 +11,7 @@ const Overlay = () => {
     <>
       {lobby.side === "s" && (
         <div className="absolute bottom-0 right-0 top-0 z-10 flex h-full w-full items-center justify-cente">
-          <div className="flex w-full items-center justify-center gap-4 px-2 py-4 text-white">
+          <div className="flex w-full items-center justify-center gap-4 px-2 py-4">
             Loading <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
           </div>
         </div>
