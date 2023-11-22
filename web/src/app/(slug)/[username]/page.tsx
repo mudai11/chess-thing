@@ -36,7 +36,7 @@ export default async function Profile({ params: { username } }: pageProps) {
   if (!user) return notFound();
 
   return (
-    <main className="flex items-center justify-center pt-10 px-2">
+    <main className="flex items-start justify-center pt-10 px-2 min-h-screen">
       <section className="flex flex-col items-center justify-center border w-full max-w-[1200px] rounded-lg">
         <ProfileHeader user={user} />
         <Separator className="w-[92%]" />

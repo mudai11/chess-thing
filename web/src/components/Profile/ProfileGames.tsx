@@ -17,7 +17,7 @@ export async function ProfileGames({ games, username }: ProfileGamesProps) {
     );
 
   return (
-    <div className="flex flex-col items-center justify-start w-full md:h-[600px] md:overflow-y-scroll">
+    <div className="flex flex-col items-center justify-start w-full min-h-[600px] md:h-[600px] md:overflow-y-scroll">
       {games.map((game, index) => {
         const date = new Date(game.date);
         let year = new Intl.DateTimeFormat("en", { year: "numeric" }).format(

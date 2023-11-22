@@ -16,7 +16,7 @@ export default async function Settings() {
     redirect("/sign-in");
   }
   return (
-    <div className="max-w-4xl mx-auto py-12">
+    <div className="max-w-4xl mx-auto py-12 min-h-screen">
       <div className="grid items-start gap-8">
         <h1 className="font-bold text-3xl md:text-4xl">Settings</h1>
         <div className="grid gap-5 px-4">
