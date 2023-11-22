@@ -129,11 +129,12 @@ async function updateUserUsernameHandler(
       error: "Unauthorized.",
     });
   }
+  console.log("token: " + token);
   const decoded: {
     id: string;
     iat: string;
   } | null = app.jwt.decode(token);
-
+  console.log("decoded: " + decoded);
   if (!decoded) {
     return reply.status(400).send({
       error: "Access token is invalid.",
