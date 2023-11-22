@@ -26,6 +26,10 @@ export async function joinLobby(
     }
     if (game.players === 2) {
       this.join(game_id);
+      this.nsp.to(game_id).emit("joined-lobby", "w", username, {
+        white: game.white_player,
+        black: game.black_player,
+      });
       return;
     }
     this.join(game_id);
@@ -33,12 +37,28 @@ export async function joinLobby(
 
     if (game.white_player) {
       game.black_player = username;
+      await db.game.update({
+        where: {
+          id: game_id,
+        },
+        data: {
+          black_player: username,
+        },
+      });
       this.nsp.to(game_id).emit("joined-lobby", "b", username, {
         white: game.white_player,
         black: game.black_player,
       });
     } else {
       game.white_player = username;
+      await db.game.update({
+        where: {
+          id: game_id,
+        },
+        data: {
+          white_player: username,
+        },
+      });
       this.nsp.to(game_id).emit("joined-lobby", "w", username, {
         white: game.white_player,
         black: game.black_player,

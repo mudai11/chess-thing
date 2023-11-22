@@ -82,6 +82,41 @@ async function deleteUser(id: string) {
   });
 }
 
+async function getUserHeader(username: string) {
+  return await db.user.findUnique({
+    where: {
+      username,
+    },
+    select: {
+      username: true,
+      image: true,
+      wins: true,
+      draws: true,
+      losses: true,
+      created_at: true,
+    },
+  });
+}
+
+async function getUserGames(username: string) {
+  return await db.game.findMany({
+    where: {
+      OR: [
+        {
+          white_player: username,
+        },
+        {
+          black_player: username,
+        },
+      ],
+    },
+    take: 20,
+    orderBy: {
+      date: "desc",
+    },
+  });
+}
+
 export {
   createUser,
   getUsers,
@@ -91,4 +126,6 @@ export {
   updateUserUsername,
   updateUserPassword,
   deleteUser,
+  getUserHeader,
+  getUserGames,
 };

@@ -8,6 +8,8 @@ import {
   updateUserUsernameHandler,
   updateUserEmailHandler,
   updateUserPasswordHandler,
+  getUserHandler,
+  getUserGamesHandler,
 } from "./user.controller";
 import { $ref } from "./user.schema";
 import { $ref as sharedRef } from "../shared/response.schema";
@@ -115,4 +117,8 @@ export default async function userRoutes(app: FastifyInstance) {
   );
 
   app.get("/", getUsersHandler);
+
+  app.get("/user-header/:username", getUserHandler);
+
+  app.get("/user-games/:username", getUserGamesHandler);
 }

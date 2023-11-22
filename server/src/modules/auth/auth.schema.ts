@@ -8,11 +8,6 @@ const userSchema = z.object({
   username: z.string(),
   image: z.string(),
   with_provider: z.boolean(),
-  games_as_black: z.any().array(),
-  games_as_white: z.any().array(),
-  wins: z.number(),
-  losses: z.number(),
-  draws: z.number(),
 });
 
 export type UserSchema = z.infer<typeof userSchema>;

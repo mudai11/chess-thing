@@ -5,6 +5,8 @@ import {
   deleteUser,
   findUserById,
   findUserByUsername,
+  getUserHeader,
+  getUserGames,
   getUsers,
   updateUserEmail,
   updateUserPassword,
@@ -352,6 +354,47 @@ async function deleteUserHandler(
   }
 }
 
+async function getUserHandler(
+  request: FastifyRequest<{
+    Params: { username: string };
+  }>,
+  reply: FastifyReply
+) {
+  try {
+    const username = request.params.username;
+    const user = await getUserHeader(username);
+
+    if (!user) return reply.status(400).send({ error: "User not found." });
+
+    return reply.status(200).send(user);
+  } catch (e) {
+    return reply.status(500).send({
+      error: "Could not get user details right now, try again later.",
+    });
+  }
+}
+
+async function getUserGamesHandler(
+  request: FastifyRequest<{
+    Params: { username: string };
+  }>,
+  reply: FastifyReply
+) {
+  try {
+    const username = request.params.username;
+    const user_games = await getUserGames(username);
+
+    if (!user_games)
+      return reply.status(400).send({ error: "User not found." });
+
+    return reply.status(200).send(user_games);
+  } catch (e) {
+    return reply.status(500).send({
+      error: "Could not get user details right now, try again later.",
+    });
+  }
+}
+
 export {
   createUserHandler,
   getUsersHandler,
@@ -361,4 +404,6 @@ export {
   updateUserPasswordHandler,
   deleteSessionHandler,
   deleteUserHandler,
+  getUserGamesHandler,
+  getUserHandler,
 };

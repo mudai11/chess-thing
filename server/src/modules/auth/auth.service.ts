@@ -12,11 +12,6 @@ async function getAuthenticatedUser(id: string) {
       username: true,
       image: true,
       with_provider: true,
-      games_as_black: true,
-      games_as_white: true,
-      wins: true,
-      losses: true,
-      draws: true,
     },
   });
 }

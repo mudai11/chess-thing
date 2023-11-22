@@ -90,7 +90,7 @@ async function getGameHandler(
   reply: FastifyReply
 ) {
   try {
-    const { id } = request.params;
+    const id = request.params.id;
     const game = await getGame(id);
 
     if (!game) return reply.status(404).send({ error: "Game does not exist." });

@@ -121,7 +121,7 @@ const ArchivedGame: FC<ArchivedGameProps> = ({ game }) => {
     );
 
   return (
-    <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-10 lg:gap-10 2xl:gap-16">
+    <main className="flex w-full flex-wrap justify-center gap-6 px-4 py-16 lg:gap-10 2xl:gap-16">
       <section
         className="relative h-min"
         style={{
