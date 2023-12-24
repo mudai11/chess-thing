@@ -14,8 +14,8 @@ const HeroButtons = async () => {
       {!user && (
         <Button
           asChild
-          className="flex items-center gap-2 cursor-pointer rounded-xl border-2 px-4 py-2 text-md"
-          variant="ghost"
+          className="flex items-center gap-2 cursor-pointer rounded-md px-4 py-2 text-md"
+          variant="outline"
         >
           <Link href="sign-up">
             <span className="flex items-center justify-center gap-2 w-[200px] lg:w-fit">

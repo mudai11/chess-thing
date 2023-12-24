@@ -77,48 +77,11 @@
   }
 }
 
-.moving-grid-background {
-  will-change: transform;
-  background-size: 3rem 3rem;
-  background-image: linear-gradient(
-      to right,
-      rgba(109, 109, 109, 0.133) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, rgba(122, 122, 122, 0.133) 1px, transparent 1px);
-  animation: movingbackground 80s linear infinite !important;
-}
-@keyframes movingbackground {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(0, -50%);
-  }
-}
-
-@property --gradient-angle {
-  syntax: "<angle>";
-  initial-value: 360deg;
-  inherits: false;
-}
-
 .hero-play-button {
-  background: linear-gradient(
-    var(--gradient-angle),
-    hsla(209, 34%, 45%, 0.7),
-    #4b7399,
-    hsla(209, 34%, 45%, 0.3)
-  );
+  background: #4b7399;
 }
 .hero-play-button-dark {
-  background: linear-gradient(
-    var(--gradient-angle),
-    hsla(0, 0%, 100%, 0.5),
-    #fff,
-    hsla(0, 0%, 100%, 0.3)
-  ) !important;
-  animation: gradient-rotate 5s linear infinite reverse;
+  background: #fff;
 }
 
 .container {
