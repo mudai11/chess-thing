@@ -1,7 +1,3 @@
-import { User, Game } from "@prisma/client";
-
-export type { User, Game };
-
 export interface GoogleUserResult {
   iss: string;
   azp: string;
