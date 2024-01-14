@@ -8,16 +8,19 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import StartGameButton from "./StartGameButton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "../ui/button";
+import {Button, buttonVariants} from "../ui/button";
+import { Play } from "lucide-react";
 
 export async function SignInAlert() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <StartGameButton />
+        <Button variant="outline">
+          <Play className="mr-1 h-4 w-4" />
+          Start a game
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

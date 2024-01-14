@@ -21,11 +21,10 @@ const Navbar = async () => {
           <Link
             href="/sign-in"
             className={cn(
-              buttonVariants({ variant: "ghost" }),
-              "flex align-center justify-center gap-2 p-2 text-sm rounded-lg"
+              buttonVariants({ variant: "ghost" })
             )}
           >
-            <LogIn className="w-4 h-4" />
+            <LogIn className="mr-1 w-4 h-4" />
             Login
           </Link>
         )}

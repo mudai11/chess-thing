@@ -19,13 +19,13 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import StartGameButton from "./StartGameButton";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user-store";
 import { env } from "@/../env";
 import axios, { AxiosError } from "axios";
 import { Icons } from "../Icons";
 import { toast } from "@/hooks/useToast";
+import { Play } from "lucide-react";
 
 type TSide = "white" | "black";
 
@@ -81,7 +81,10 @@ export function CreateLobbyDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <StartGameButton />
+        <Button variant="outline">
+          <Play className="mr-1 h-4 w-4" />
+          Start a game
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
