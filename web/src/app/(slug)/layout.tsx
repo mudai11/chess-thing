@@ -5,7 +5,6 @@ import { ThemeProvider } from "../../context/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import NextTopLoader from "nextjs-toploader";
 import Navbar from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,7 +34,6 @@ export default async function RootLayout({
           <Navbar />
           <Toaster />
           {children}
-          <Footer />
         </ThemeProvider>
       </body>
     </html>

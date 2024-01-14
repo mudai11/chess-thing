@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export function Footer() {
   return (
-    <footer className="flex flex-col items-center gap-2 px-8 pb-12 text-sm font-light py-12">
+    <footer className="flex flex-col items-center gap-2 px-8 pb-0 text-sm font-light py-12">
       <div className="container flex flex-col-reverse justify-between gap-2 md:flex-row md:items-end">
         <span>
           Built by{" "}
@@ -26,7 +26,7 @@ export function Footer() {
             target="_blank"
             rel="noreferrer"
             className="group gap-1 md:inline-flex"
-            href="https://twitter.com/mudai11_"
+            href="https://twitter.com/aka_mudai"
           >
             <Icons.twitter className="h-4 w-4 duration-150 group-hover:scale-110 fill-black dark:fill-white" />
           </a>

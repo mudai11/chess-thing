@@ -80,7 +80,7 @@ export function CreateLobbyDialog() {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <StartGameButton />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

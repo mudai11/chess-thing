@@ -16,7 +16,7 @@ import { buttonVariants } from "../ui/button";
 export async function SignInAlert() {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
+      <AlertDialogTrigger asChild>
         <StartGameButton />
       </AlertDialogTrigger>
       <AlertDialogContent>
