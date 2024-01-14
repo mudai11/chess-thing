@@ -19,7 +19,7 @@ const HeroButtons = async () => {
         >
           <Link href="sign-up">
             <span className="flex items-center justify-center gap-2 w-[200px] lg:w-fit">
-              <UserPlus2 className="mr-1 h-5 w-5 stroke-[3]" />
+              <UserPlus2 className="mr-1 h-5 w-5" />
               Create an account
             </span>
           </Link>
