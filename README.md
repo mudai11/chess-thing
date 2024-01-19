@@ -134,4 +134,4 @@ Thank You for passing by!!
 
 If you have any questions or feedback, please reach out to us at [akahades11@gmail.com](mailto:akahades11@gmail.com?subject=[Chess-Thing]%20-%20Your%20Subject), or you can join our [discord server](https://discord.gg/9FKyFFvv).
 <br>
-or you can DM me on Discord `aka_theos#3375`.
+or you can DM me on Discord `aka_mudai`.
